@@ -1,6 +1,7 @@
 export interface ServerConfig {
 	GameLoop: {
 		PlayersNeededToStart: number;
+		IntermissionTime: number;
 	};
 }
 

@@ -5,6 +5,7 @@ import StatusService from "./StatusService";
 
 const SERVER_CONFIG = GetConfig();
 const PLAYERS_NEEDED_TO_START_GAME = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
+const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -42,8 +43,8 @@ export default class GameLoopService implements OnStart {
 			}
 
 			this.StatusService.UpdateStatus("Intermission");
-			this.StatusService.StartCountdown(10);
-			task.wait(10);
+			this.StatusService.StartCountdown(INTERMISSION_LENGTH);
+			task.wait(INTERMISSION_LENGTH);
 
 			playersInGame = this.GetPlayerCount();
 
