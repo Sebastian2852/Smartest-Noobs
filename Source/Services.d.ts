@@ -206,4 +206,8 @@ interface HasGameGui {
 
 interface PlayerGui extends BasePlayerGui, HasGameGui {}
 
+interface ServerScriptService extends Instance {
+	ServerConfig: ModuleScript;
+}
+
 // No need to index GameGui in starterGUI since we wont interact with it there

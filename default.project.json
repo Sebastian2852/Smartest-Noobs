@@ -10,6 +10,9 @@
 			"$className": "ServerScriptService",
 			"Game": {
 				"$path": "out/Server"
+			},
+			"ServerConfig": {
+				"$path": "out/ServerConfig.toml"
 			}
 		},
 		"ReplicatedStorage": {
