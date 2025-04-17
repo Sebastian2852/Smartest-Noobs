@@ -9,13 +9,29 @@ const SERVER_CONFIG = GetConfig();
 export default class GameLoopService implements OnStart {
 	private ServerClosing = false;
 
+	private IsPlayerReady(player: Player) {
+		const dataLoaded = (player.GetAttribute("DataLoaded") as boolean) ?? false;
+		return dataLoaded;
+	}
+
+	private GetPlayerCount() {
+		let players = 0;
+
+		Players.GetPlayers().forEach((player) => {
+			if (!this.IsPlayerReady(player)) return;
+			players += 1;
+		});
+
+		return players;
+	}
+
 	onStart() {
 		game.BindToClose(() => {
 			this.ServerClosing = true;
 		});
 
 		while (!this.ServerClosing) {
-			const playersInGame = Players.GetChildren().size();
+			const playersInGame = this.GetPlayerCount();
 			const playersNeeded = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
 
 			// Make sure there are enough players

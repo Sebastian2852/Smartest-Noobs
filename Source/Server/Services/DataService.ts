@@ -35,6 +35,8 @@ export default class DataService implements OnStart {
 		profile.OnSessionEnd.Connect(() => {
 			this.ProfileMap.delete(userId);
 		});
+
+		player.SetAttribute("DataLoaded", true);
 	}
 
 	private OnPlayerRemoved(player: Player) {
@@ -43,7 +45,10 @@ export default class DataService implements OnStart {
 	}
 
 	onStart() {
-		Players.PlayerAdded.Connect((player) => this.OnPlayerAdded(player));
+		Players.PlayerAdded.Connect((player) => {
+			player.SetAttribute("DataLoaded", false);
+			this.OnPlayerAdded(player);
+		});
 
 		Players.PlayerRemoving.Connect((player) => this.OnPlayerRemoved(player));
 	}
