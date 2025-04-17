@@ -6,7 +6,9 @@ interface ServerToClientEvents {
 	UpdateStatus(newStatus: string): void;
 }
 
-interface ClientToServerFunctions {}
+interface ClientToServerFunctions {
+	GetCurrentStatus(): string;
+}
 
 interface ServerToClientFunctions {}
 
