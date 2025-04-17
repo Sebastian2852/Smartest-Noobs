@@ -1,0 +1,43 @@
+{
+	"name": "SmartestNoobs",
+	"globIgnorePaths": [
+		"**/package.json",
+		"**/tsconfig.json"
+	],
+	"tree": {
+		"$className": "DataModel",
+		"ServerScriptService": {
+			"$className": "ServerScriptService",
+			"Game": {
+				"$path": "out/Server"
+			}
+		},
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"rbxts_include": {
+				"$path": "include",
+				"node_modules": {
+					"$className": "Folder",
+					"@rbxts": {
+						"$path": "node_modules/@rbxts"
+					},
+					"@flamework": {
+						"$path": "node_modules/@flamework"
+					}
+				}
+			},
+			"Game": {
+				"$path": "out/Shared"
+			}
+		},
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"$className": "StarterPlayerScripts",
+				"Game": {
+					"$path": "out/Client"
+				}
+			}
+		}
+	}
+}
