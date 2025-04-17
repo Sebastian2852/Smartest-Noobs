@@ -1,5 +1,6 @@
 import { OnStart, Service } from "@flamework/core";
 import { Events, Functions } from "Server/Network";
+import { Logger } from "Shared/Modules/Logger";
 
 const UPDATE_STATUS_EVENT = Events.UpdateStatus;
 const GET_STATUS_FUNCTION = Functions.GetCurrentStatus;
@@ -15,15 +16,18 @@ export default class StatusService implements OnStart {
 
 	public UpdateStatus(newStatus: string) {
 		if (newStatus === this.CurrentStatus) {
+			Logger.Trace("New status same as old status; not updating");
 			return;
 		}
 
 		UPDATE_STATUS_EVENT.broadcast(newStatus);
 		this.CurrentStatus = newStatus;
+		Logger.Debug("Updated status message to: " + newStatus);
 	}
 
 	public StartCountdown(time: number) {
 		START_TIMER_EVENT.broadcast(time);
+		Logger.Debug("Started countdown lasting: " + tostring(time));
 	}
 
 	onStart(): void {
