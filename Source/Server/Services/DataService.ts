@@ -1,9 +1,12 @@
 import { OnStart, Service } from "@flamework/core";
 import ProfileStore from "@rbxts/profile-store";
 import { Players } from "@rbxts/services";
+import { Events } from "Server/Network";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
 
 const PLAYER_PROFILE_STORE = ProfileStore.New("PlayerData", PlayerDataTemplate);
+
+const UPDATE_DATA_EVENT = Events.Data.UpdateData;
 
 @Service()
 export default class DataService implements OnStart {
@@ -61,6 +64,7 @@ export default class DataService implements OnStart {
 			this.ProfileMap.delete(userId);
 		});
 
+		UPDATE_DATA_EVENT.fire(player, profile.Data);
 		player.SetAttribute("DataLoaded", true);
 	}
 
@@ -78,7 +82,6 @@ export default class DataService implements OnStart {
 
 	onStart() {
 		Players.PlayerAdded.Connect((player) => this.OnPlayerAdded(player));
-
 		Players.PlayerRemoving.Connect((player) => this.OnPlayerRemoved(player));
 	}
 }
