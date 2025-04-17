@@ -1,2 +1,3 @@
 [GameLoop]
 PlayersNeededToStart = 2
+IntermissionTime = 10

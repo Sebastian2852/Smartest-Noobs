@@ -5,6 +5,7 @@ interface ClientToServerEvents {}
 
 interface ServerToClientEvents {
 	UpdateStatus(newStatus: string): void;
+	StartTimer(timerLength: number): void;
 
 	Data: {
 		UpdateData(data: typeof PlayerDataTemplate): void;

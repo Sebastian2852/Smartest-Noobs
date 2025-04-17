@@ -4,6 +4,7 @@ import { GetConfig } from "Shared/Modules/Utils";
 import StatusService from "./StatusService";
 
 const SERVER_CONFIG = GetConfig();
+const PLAYERS_NEEDED_TO_START_GAME = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -31,20 +32,25 @@ export default class GameLoopService implements OnStart {
 		});
 
 		while (!this.ServerClosing) {
-			const playersInGame = this.GetPlayerCount();
-			const playersNeeded = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
+			let playersInGame = this.GetPlayerCount();
 
 			// Make sure there are enough players
-			if (playersInGame < playersNeeded) {
-				print("Not enough players");
+			if (playersInGame < PLAYERS_NEEDED_TO_START_GAME) {
 				this.StatusService.UpdateStatus("Not enough players");
 				task.wait(1);
 				continue;
 			}
 
-			this.StatusService.UpdateStatus("Running loop");
-			print("Running loop");
-			task.wait(1);
+			this.StatusService.UpdateStatus("Intermission");
+			this.StatusService.StartCountdown(10);
+			task.wait(10);
+
+			playersInGame = this.GetPlayerCount();
+
+			if (playersInGame < PLAYERS_NEEDED_TO_START_GAME) {
+				this.StatusService.UpdateStatus("Not enough players");
+				continue;
+			}
 		}
 	}
 
