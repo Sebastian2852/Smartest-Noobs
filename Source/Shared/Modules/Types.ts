@@ -3,3 +3,7 @@ export interface ServerConfig {
 		PlayersNeededToStart: number;
 	};
 }
+
+export const PlayerDataTemplate = {
+	Wins: 0,
+};
