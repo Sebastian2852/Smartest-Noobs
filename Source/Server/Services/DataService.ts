@@ -9,7 +9,32 @@ const PLAYER_PROFILE_STORE = ProfileStore.New("PlayerData", PlayerDataTemplate);
 export default class DataService implements OnStart {
 	private ProfileMap = new Map<number, ProfileStore.Profile<typeof PlayerDataTemplate>>();
 
-	private OnPlayerAdded(player: Player) {
+	private UpdateLeaderstats(player: Player) {
+		const profile = this.ProfileMap.get(player.UserId);
+		if (profile === undefined) {
+			warn("Cannot update leaderstats; no profile found");
+			return;
+		}
+
+		const data = profile.Data;
+
+		const leaderstatsFolder = player.WaitForChild("leaderstats") as Folder;
+		const winsValue = leaderstatsFolder.WaitForChild("Wins") as IntValue;
+		winsValue.Value = data.Wins;
+	}
+
+	private CreateLeaderstatsFolder(player: Player) {
+		const leaderstatsFolder = new Instance("Folder");
+		leaderstatsFolder.Name = "leaderstats";
+		leaderstatsFolder.Parent = player;
+
+		const winsValue = new Instance("IntValue");
+		winsValue.Name = "Wins";
+		winsValue.Parent = leaderstatsFolder;
+		winsValue.Value = -1;
+	}
+
+	private LoadProfileForPlayer(player: Player) {
 		const userId = player.UserId;
 		const key = tostring(userId);
 		const profile = PLAYER_PROFILE_STORE.StartSessionAsync(key, {
@@ -39,16 +64,20 @@ export default class DataService implements OnStart {
 		player.SetAttribute("DataLoaded", true);
 	}
 
+	private OnPlayerAdded(player: Player) {
+		player.SetAttribute("DataLoaded", false);
+		this.CreateLeaderstatsFolder(player);
+		this.LoadProfileForPlayer(player);
+		this.UpdateLeaderstats(player);
+	}
+
 	private OnPlayerRemoved(player: Player) {
 		const profile = this.ProfileMap.get(player.UserId);
 		profile?.EndSession();
 	}
 
 	onStart() {
-		Players.PlayerAdded.Connect((player) => {
-			player.SetAttribute("DataLoaded", false);
-			this.OnPlayerAdded(player);
-		});
+		Players.PlayerAdded.Connect((player) => this.OnPlayerAdded(player));
 
 		Players.PlayerRemoving.Connect((player) => this.OnPlayerRemoved(player));
 	}
