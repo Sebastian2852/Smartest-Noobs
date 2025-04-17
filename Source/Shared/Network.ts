@@ -2,7 +2,9 @@ import { Networking } from "@flamework/networking";
 
 interface ClientToServerEvents {}
 
-interface ServerToClientEvents {}
+interface ServerToClientEvents {
+	UpdateStatus(newStatus: string): void;
+}
 
 interface ClientToServerFunctions {}
 

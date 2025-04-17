@@ -87,7 +87,7 @@ interface HasGameGui {
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
 		TopBar: Frame & {
-			["TopB ar"]: ImageLabel & {
+			TopBar: ImageLabel & {
 				UICorner: UICorner;
 				Text: TextLabel & {
 					UIStroke: UIStroke;

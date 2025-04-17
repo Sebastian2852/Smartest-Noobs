@@ -1,6 +1,7 @@
 import { OnStart, Service } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import { GetConfig } from "Shared/Modules/Utils";
+import StatusService from "./StatusService";
 
 const SERVER_CONFIG = GetConfig();
 
@@ -20,12 +21,16 @@ export default class GameLoopService implements OnStart {
 			// Make sure there are enough players
 			if (playersInGame < playersNeeded) {
 				print("Not enough players");
+				this.StatusService.UpdateStatus("Not enough players");
 				task.wait(1);
 				continue;
 			}
 
+			this.StatusService.UpdateStatus("Running loop");
 			print("Running loop");
 			task.wait(1);
 		}
 	}
+
+	constructor(private StatusService: StatusService) {}
 }
