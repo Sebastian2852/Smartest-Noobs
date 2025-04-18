@@ -1,6 +1,12 @@
 interface HasGameGui {
 	ScreenGui: ScreenGui & {
-		Stats: Frame;
+		Stats: Frame & {
+			Wins: ImageLabel & {
+				Wins: ImageLabel & {
+					Text: TextLabel;
+				};
+			};
+		};
 		Buttons: Frame & {
 			Stands: ImageButton & {
 				UIGradient: UIGradient;

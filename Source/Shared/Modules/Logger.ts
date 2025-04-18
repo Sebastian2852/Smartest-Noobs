@@ -1,8 +1,8 @@
 let MaxCallerLength = 0;
 
 const TRACE_ENABLED = false;
-const DEBUG_ENABLED = false;
-const WARN_ENABLED = false;
+const DEBUG_ENABLED = true;
+const WARN_ENABLED = true;
 
 function GetCallerInfo(UpLevel: number): string {
 	const FullNameOfCaller: string = debug.info(UpLevel, "s")[0];

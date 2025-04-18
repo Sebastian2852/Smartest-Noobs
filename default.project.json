@@ -26,6 +26,9 @@
 					},
 					"@flamework": {
 						"$path": "node_modules/@flamework"
+					},
+					"@rbxutil": {
+						"$path": "node_modules/@rbxutil"
 					}
 				}
 			},
