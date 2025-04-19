@@ -216,4 +216,10 @@ interface ServerScriptService extends Instance {
 	ServerConfig: ModuleScript;
 }
 
-// No need to index GameGui in starterGUI since we wont interact with it there
+interface ReplicatedStorage extends Instance {
+	Stands: Folder;
+}
+
+interface Workspace extends Instance {
+	Podiums: Folder;
+}

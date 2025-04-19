@@ -7,4 +7,7 @@ export interface ServerConfig {
 
 export const PlayerDataTemplate = {
 	Wins: 0,
+
+	EquippedStand: "Default",
+	Stands: new Map<string, boolean>(),
 };

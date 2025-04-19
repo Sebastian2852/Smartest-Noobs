@@ -13,6 +13,15 @@ const UPDATE_DATA_EVENT = Events.Data.UpdateData;
 export default class DataService implements OnStart {
 	private ProfileMap = new Map<number, ProfileStore.Profile<typeof PlayerDataTemplate>>();
 
+	public GetEquippedStandName(player: Player) {
+		const profile = this.ProfileMap.get(player.UserId);
+		if (profile === undefined) {
+			return undefined;
+		}
+
+		return profile.Data.EquippedStand;
+	}
+
 	private UpdateLeaderstats(player: Player) {
 		Logger.Trace("Updating player's leaderstats");
 		const profile = this.ProfileMap.get(player.UserId);
