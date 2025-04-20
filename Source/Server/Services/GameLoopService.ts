@@ -13,6 +13,8 @@ const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
 @Service()
 export default class GameLoopService implements OnStart {
 	private ServerClosing = false;
+	// UserID, StandIndex
+	private StandMap = new Map<number, number>();
 
 	private IsPlayerReady(player: Player) {
 		const dataLoaded = (player.GetAttribute("DataLoaded") as boolean) ?? false;
@@ -32,6 +34,47 @@ export default class GameLoopService implements OnStart {
 
 	private GetPlayerCount() {
 		return this.GetPlayersReady().size();
+	}
+
+	private GiveStand(player: Player, index: number): LuaTuple<[Model, () => void]> {
+		const equippedStand = this.DataService.GetEquippedStandName(player) ?? "Default";
+		const standConfig = ReplicatedStorage.Stands.FindFirstChild(equippedStand)!;
+		const standModel = standConfig.FindFirstChildWhichIsA("Model")!;
+
+		// Podiums start at 1 instead of 0
+		const podiumIndex = index + 1;
+		const podium = Workspace.Podiums.FindFirstChild(tostring(podiumIndex)) as Model;
+
+		if (podium === undefined) {
+			Logger.Warn("Couldn't find podium for player, server player limit too high?");
+			player.Kick("Too many players in server?");
+			return $tuple(undefined as unknown as Model, undefined as unknown as () => void);
+		}
+
+		const pivot = podium.GetPivot();
+		const newPivot = pivot.add(new Vector3(0, -50, 0));
+
+		podium.PivotTo(newPivot);
+
+		const playerStand = standModel.Clone();
+		playerStand.Parent = Workspace;
+		playerStand.PivotTo(pivot);
+
+		this.StandMap.set(player.UserId, index + 1);
+		return $tuple(playerStand, () => podium.PivotTo(pivot));
+	}
+
+	private RemoveStand(player: Player) {
+		const standId = this.StandMap.get(player.UserId);
+		if (standId === undefined) return false;
+
+		const stand = Workspace.Podiums.FindFirstChild(tostring(standId));
+		if (stand === undefined) return false;
+		stand.Destroy();
+
+		this.StandMap.delete(player.UserId);
+
+		return true;
 	}
 
 	onStart() {
@@ -66,33 +109,9 @@ export default class GameLoopService implements OnStart {
 				rng.Shuffle(playingPlayers);
 
 				playingPlayers.forEach((player, index) => {
-					const equippedStand = this.DataService.GetEquippedStandName(player) ?? "Default";
-					const standConfig = ReplicatedStorage.Stands.FindFirstChild(equippedStand)!;
-					const standModel = standConfig.FindFirstChildWhichIsA("Model")!;
-
-					// Podiums start at 1 instead of 0
-					const podiumIndex = index + 1;
-					const podium = Workspace.Podiums.FindFirstChild(tostring(podiumIndex)) as Model;
-
-					if (podium === undefined) {
-						Logger.Warn("Couldn't find podium for player, server player limit too high?");
-						player.Kick("Too many players in server?");
-						return;
-					}
-
-					const pivot = podium.GetPivot();
-					const newPivot = pivot.add(new Vector3(0, -50, 0));
-
-					podium.PivotTo(newPivot);
-
-					const playerStand = standModel.Clone();
-					playerStand.Parent = Workspace;
-					playerStand.PivotTo(pivot);
-
-					gameTrove.add(playerStand);
-					gameTrove.add(() => {
-						podium.PivotTo(pivot);
-					});
+					const [stand, resetStandPos] = this.GiveStand(player, index);
+					gameTrove.add(stand);
+					gameTrove.add(resetStandPos);
 				});
 
 				resolve();
@@ -108,7 +127,47 @@ export default class GameLoopService implements OnStart {
 				assignPromise.await();
 			}
 
+			// START CUTSCENE
+
+			task.wait(1);
+
+			playingPlayers.forEach((player, index) => {
+				if (!player.Character) {
+					playingPlayers.remove(index);
+					this.RemoveStand(player);
+					return;
+				}
+
+				const standId = this.StandMap.get(player.UserId);
+
+				if (standId === undefined) {
+					playingPlayers.remove(index);
+					this.RemoveStand(player);
+					return;
+				}
+
+				const trapdoor = Workspace.TrapDoors.FindFirstChild(tostring(standId))! as BasePart;
+				const character = player.Character;
+				const Humanoid = character.FindFirstChildWhichIsA("Humanoid")!;
+
+				gameTrove.add(
+					Humanoid.Died.Connect(() => {
+						playingPlayers.remove(index);
+						this.RemoveStand(player);
+					}),
+				);
+
+				Humanoid.WalkSpeed = 0;
+				Humanoid.JumpHeight = 0;
+				character.PivotTo(trapdoor.CFrame.add(new Vector3(0, 5, 0)));
+			});
+
+			this.StatusService.UpdateStatus("TESTING");
+			this.StatusService.StartCountdown(10);
+			task.wait(10);
+
 			gameTrove.destroy();
+			playingPlayers.forEach((player) => player.LoadCharacter());
 		}
 	}
 

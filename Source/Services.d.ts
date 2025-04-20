@@ -222,4 +222,5 @@ interface ReplicatedStorage extends Instance {
 
 interface Workspace extends Instance {
 	Podiums: Folder;
+	TrapDoors: Folder;
 }
