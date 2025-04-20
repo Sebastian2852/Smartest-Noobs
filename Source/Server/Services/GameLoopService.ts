@@ -1,14 +1,18 @@
 import { OnStart, Service } from "@flamework/core";
-import { Players, ReplicatedStorage, Workspace } from "@rbxts/services";
+import { Players, ReplicatedStorage, StarterGui, Workspace } from "@rbxts/services";
 import { GetConfig } from "Shared/Modules/Utils";
 import StatusService from "./StatusService";
 import { Logger } from "Shared/Modules/Logger";
 import DataService from "./DataService";
 import { Trove } from "@rbxts/trove";
+import { Events } from "Server/Network";
+import { Cutscenes } from "Shared/Modules/Types";
 
 const SERVER_CONFIG = GetConfig();
 const PLAYERS_NEEDED_TO_START_GAME = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
 const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
+
+const START_CUTSCENE_EVENT = Events.StartCutscene;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -127,8 +131,7 @@ export default class GameLoopService implements OnStart {
 				assignPromise.await();
 			}
 
-			// START CUTSCENE
-
+			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
 			task.wait(1);
 
 			playingPlayers.forEach((player, index) => {
@@ -168,6 +171,7 @@ export default class GameLoopService implements OnStart {
 
 			gameTrove.destroy();
 			playingPlayers.forEach((player) => player.LoadCharacter());
+			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);
 		}
 	}
 

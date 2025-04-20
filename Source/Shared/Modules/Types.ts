@@ -11,3 +11,8 @@ export const PlayerDataTemplate = {
 	EquippedStand: "Default",
 	Stands: new Map<string, boolean>(),
 };
+
+export const enum Cutscenes {
+	Start,
+	End,
+}

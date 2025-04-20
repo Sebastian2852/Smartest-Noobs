@@ -1,11 +1,13 @@
 import { Networking } from "@flamework/networking";
-import { PlayerDataTemplate } from "./Modules/Types";
+import { Cutscenes, PlayerDataTemplate } from "./Modules/Types";
 
 interface ClientToServerEvents {}
 
 interface ServerToClientEvents {
 	UpdateStatus(newStatus: string): void;
 	StartTimer(timerLength: number): void;
+
+	StartCutscene(cutscene: Cutscenes): void;
 
 	Data: {
 		UpdateData(data: typeof PlayerDataTemplate): void;

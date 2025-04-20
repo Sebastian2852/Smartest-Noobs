@@ -223,4 +223,9 @@ interface ReplicatedStorage extends Instance {
 interface Workspace extends Instance {
 	Podiums: Folder;
 	TrapDoors: Folder;
+	StartCutsceneCameraPositions: Folder;
+	GameParts: Folder & {
+		Curtain: UnionOperation;
+		PlayerSpotLight: Part;
+	};
 }
