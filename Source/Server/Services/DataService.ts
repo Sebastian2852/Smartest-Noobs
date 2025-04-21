@@ -1,6 +1,6 @@
 import { OnStart, Service } from "@flamework/core";
 import ProfileStore from "@rbxts/profile-store";
-import { Players } from "@rbxts/services";
+import { Players, ServerScriptService } from "@rbxts/services";
 import { Events } from "Server/Network";
 import { Logger } from "Shared/Modules/Logger";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
@@ -20,6 +20,16 @@ export default class DataService implements OnStart {
 		}
 
 		return profile.Data.EquippedStand;
+	}
+
+	private SetEquippedStand(player: Player, stand: string) {
+		const profile = this.ProfileMap.get(player.UserId);
+		if (profile === undefined) {
+			return undefined;
+		}
+
+		profile.Data.EquippedStand = stand;
+		UPDATE_DATA_EVENT.fire(player, profile.Data);
 	}
 
 	private UpdateLeaderstats(player: Player) {
@@ -119,5 +129,9 @@ export default class DataService implements OnStart {
 		Players.PlayerAdded.Connect((player) => this.OnPlayerAdded(player));
 		Players.PlayerRemoving.Connect((player) => this.OnPlayerRemoved(player));
 		Logger.Trace("Connected events");
+
+		ServerScriptService.Game.Cmdr.RunEvents.SetStand.Event.Connect((player: Player, stand: string) =>
+			this.SetEquippedStand(player, stand),
+		);
 	}
 }

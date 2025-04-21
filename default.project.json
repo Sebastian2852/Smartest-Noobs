@@ -9,7 +9,10 @@
 		"ServerScriptService": {
 			"$className": "ServerScriptService",
 			"Game": {
-				"$path": "out/Server"
+				"$path": "out/Server",
+				"Cmdr": {
+					"$path": "out/Cmdr"
+				}
 			},
 			"ServerConfig": {
 				"$path": "out/ServerConfig.toml"

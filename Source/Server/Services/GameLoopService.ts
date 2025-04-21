@@ -104,32 +104,17 @@ export default class GameLoopService implements OnStart {
 			this.StatusService.StartCountdown(INTERMISSION_LENGTH);
 			const playingPlayers = this.GetPlayersReady();
 			const gameTrove = new Trove();
-
-			// While the intermission timer is going and nothing is going on we can
-			// already start giving people stands and setting up game area
-			const assignPromise = new Promise<void>((resolve) => {
-				// Randomise the order of players
-				const rng = new Random(os.time());
-				rng.Shuffle(playingPlayers);
-
-				playingPlayers.forEach((player, index) => {
-					const [stand, resetStandPos] = this.GiveStand(player, index);
-					gameTrove.add(stand);
-					gameTrove.add(resetStandPos);
-				});
-
-				resolve();
-			});
-
 			task.wait(INTERMISSION_LENGTH);
 
 			// In case the stands are still somehow being given out
-			const status = assignPromise.getStatus();
-			if (status !== Promise.Status.Resolved) {
-				Logger.Warn("Game not ready yet?");
-				this.StatusService.UpdateStatus("Setting up game");
-				assignPromise.await();
-			}
+			const rng = new Random(os.time());
+			rng.Shuffle(playingPlayers);
+
+			playingPlayers.forEach((player, index) => {
+				const [stand, resetStandPos] = this.GiveStand(player, index);
+				gameTrove.add(stand);
+				gameTrove.add(resetStandPos);
+			});
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
 			task.wait(1);
@@ -169,9 +154,12 @@ export default class GameLoopService implements OnStart {
 			this.StatusService.StartCountdown(10);
 			task.wait(10);
 
-			gameTrove.destroy();
 			playingPlayers.forEach((player) => player.LoadCharacter());
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);
+
+			task.wait(4);
+
+			gameTrove.destroy();
 		}
 	}
 

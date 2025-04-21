@@ -214,6 +214,16 @@ interface PlayerGui extends BasePlayerGui, HasGameGui {}
 
 interface ServerScriptService extends Instance {
 	ServerConfig: ModuleScript;
+	Game: Folder & {
+		Cmdr: Folder & {
+			Hooks: Folder;
+			Types: Folder;
+			Commands: Folder;
+			RunEvents: Folder & {
+				SetStand: BindableEvent;
+			};
+		};
+	};
 }
 
 interface ReplicatedStorage extends Instance {
