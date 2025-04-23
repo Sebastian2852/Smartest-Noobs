@@ -214,6 +214,7 @@ interface PlayerGui extends BasePlayerGui, HasGameGui {}
 
 interface ServerScriptService extends Instance {
 	ServerConfig: ModuleScript;
+	Questions: ModuleScript;
 	Game: Folder & {
 		Cmdr: Folder & {
 			Hooks: Folder;

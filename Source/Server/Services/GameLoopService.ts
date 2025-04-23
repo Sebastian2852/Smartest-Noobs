@@ -7,8 +7,11 @@ import DataService from "./DataService";
 import { Trove } from "@rbxts/trove";
 import { Events } from "Server/Network";
 import { Cutscenes } from "Shared/Modules/Types";
+import { GetQuestionsData } from "Server/Modules/Util";
 
 const SERVER_CONFIG = GetConfig();
+const QUESTION_DATA = GetQuestionsData();
+
 const PLAYERS_NEEDED_TO_START_GAME = SERVER_CONFIG.GameLoop.PlayersNeededToStart;
 const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
 
@@ -150,9 +153,35 @@ export default class GameLoopService implements OnStart {
 				character.PivotTo(trapdoor.CFrame.add(new Vector3(0, 5, 0)));
 			});
 
-			this.StatusService.UpdateStatus("TESTING");
-			this.StatusService.StartCountdown(10);
-			task.wait(10);
+			const playersLeft = playingPlayers.size();
+			let currentGrade = 1;
+
+			// THIS SHOULD NOT BE 0
+			// IT IS 0 FOR SINGLE PLAYER TESTING
+			while (playersLeft > 0) {
+				const currentGradeData = QUESTION_DATA.get(currentGrade);
+				if (currentGradeData === undefined) {
+					break;
+				}
+
+				const subjects = currentGradeData.Subjects;
+				subjects.forEach((questions) => {
+					playingPlayers.forEach((player, index) => {
+						if (player === undefined) {
+							playingPlayers.remove(index);
+							return;
+						}
+
+						const randomIndex = rng.NextInteger(1, questions.size());
+						const question = questions.get(randomIndex);
+						assert(question, "no question?");
+						print(player.Name, question.Question);
+						task.wait(currentGradeData.QuestionTime);
+					});
+				});
+
+				currentGrade++;
+			}
 
 			playingPlayers.forEach((player) => player.LoadCharacter());
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);

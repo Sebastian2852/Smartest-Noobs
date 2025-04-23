@@ -1,3 +1,23 @@
+type QuestionData = {
+	QuestionTime: number;
+	Subjects: Map<
+		string,
+		Map<
+			number,
+			{
+				Question: string;
+				Answer: {
+					Answer: unknown;
+					AnswerType: string;
+					ExactString: boolean;
+				};
+			}
+		>
+	>;
+};
+
+export type QuestionModule = Map<number, QuestionData>;
+
 export interface ServerConfig {
 	GameLoop: {
 		PlayersNeededToStart: number;
