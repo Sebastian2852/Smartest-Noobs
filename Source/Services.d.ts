@@ -1,5 +1,30 @@
 interface HasGameGui {
 	ScreenGui: ScreenGui & {
+		QuestionBar: Frame & {
+			InputArea: ImageLabel & {
+				UIGradient: UIGradient;
+				SubmitButton: ImageButton & {
+					XButton: ImageLabel & {
+						Text: TextLabel & {
+							UITextSizeConstraint: UITextSizeConstraint;
+							UIStroke: UIStroke;
+						};
+					};
+					UIAspectRatioConstraint: UIAspectRatioConstraint;
+				};
+				UICorner: UICorner;
+				UIStroke: UIStroke;
+				InputBox: TextBox & {
+					UIStroke: UIStroke;
+				};
+				ItemImage: ImageLabel;
+			};
+			QuestionText: TextLabel & {
+				UITextSizeConstraint: UITextSizeConstraint;
+				UIStroke: UIStroke;
+			};
+		};
+
 		Stats: Frame & {
 			Wins: ImageLabel & {
 				Wins: ImageLabel & {

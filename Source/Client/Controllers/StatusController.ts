@@ -7,11 +7,14 @@ const UPDATE_STATUS_EVENT = Events.UpdateStatus;
 const GET_STATUS_FUNCTION = Functions.GetCurrentStatus;
 
 const START_TIMER_EVENT = Events.StartTimer;
+const STOP_TIMER_EVENT = Events.StopTimer;
 
 const PLAYER = Players.LocalPlayer;
 
 @Controller()
 export default class StatusController implements OnStart {
+	private StopTimer = false;
+
 	private UpdateStatusGui(newStatusText: string) {
 		Logger.Trace("Updating status GUI");
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
@@ -36,7 +39,15 @@ export default class StatusController implements OnStart {
 		for (let i = 0; i <= length; i++) {
 			this.UpdateCountdownGui(length - i);
 			task.wait(1);
+
+			if (this.StopTimer) break;
 		}
+
+		this.StopTimer = false;
+	}
+
+	private StopCountdown() {
+		this.StopTimer = true;
 	}
 
 	onStart() {
@@ -44,6 +55,7 @@ export default class StatusController implements OnStart {
 		GET_STATUS_FUNCTION.invoke().andThen((status) => this.UpdateStatusGui(status));
 
 		START_TIMER_EVENT.connect((timerLength: number) => this.StartCountdown(timerLength));
+		STOP_TIMER_EVENT.connect(() => this.StopCountdown());
 		Logger.Trace("Connected evetns");
 	}
 }

@@ -16,6 +16,8 @@ const PLAYERS_NEEDED_TO_START_GAME = SERVER_CONFIG.GameLoop.PlayersNeededToStart
 const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
 
 const START_CUTSCENE_EVENT = Events.StartCutscene;
+const QUESTION_EVENT = Events.Question;
+const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -109,7 +111,6 @@ export default class GameLoopService implements OnStart {
 			const gameTrove = new Trove();
 			task.wait(INTERMISSION_LENGTH);
 
-			// In case the stands are still somehow being given out
 			const rng = new Random(os.time());
 			rng.Shuffle(playingPlayers);
 
@@ -143,6 +144,15 @@ export default class GameLoopService implements OnStart {
 
 				gameTrove.add(
 					Humanoid.Died.Connect(() => {
+						print("Removed");
+						playingPlayers.remove(index);
+						this.RemoveStand(player);
+					}),
+				);
+
+				gameTrove.add(
+					character.Destroying.Connect(() => {
+						print("Removed");
 						playingPlayers.remove(index);
 						this.RemoveStand(player);
 					}),
@@ -175,13 +185,57 @@ export default class GameLoopService implements OnStart {
 						const randomIndex = rng.NextInteger(1, questions.size());
 						const question = questions.get(randomIndex);
 						assert(question, "no question?");
-						print(player.Name, question.Question);
-						task.wait(currentGradeData.QuestionTime);
+						QUESTION_EVENT.fire(player, question.Question, currentGradeData.QuestionTime);
+
+						let questionAnswered = false;
+						let answerCorrect = false;
+
+						const answerConnection = ANSWER_QUESTION_EVENT.connect((player, answer) => {
+							answerConnection.Disconnect();
+							questionAnswered = true;
+							let realAnswer: string | number = answer;
+
+							if (!question.Answer.ExactString) {
+								realAnswer = string.lower(answer);
+							}
+
+							if (question.Answer.AnswerType === "number") {
+								realAnswer = tonumber(answer) ?? answer;
+							}
+
+							if (
+								realAnswer === question.Answer.Answer &&
+								type(realAnswer) === question.Answer.AnswerType
+							) {
+								answerCorrect = true;
+							} else {
+								player.LoadCharacter();
+							}
+						});
+
+						this.StatusService.UpdateStatus("TODO");
+						this.StatusService.StartCountdown(currentGradeData.QuestionTime);
+
+						for (let index = 1; index < currentGradeData.QuestionTime; index++) {
+							if (questionAnswered) {
+								break;
+							}
+
+							task.wait(1);
+						}
+
+						this.StatusService.CancelCountdown();
+						answerConnection.Disconnect();
+
+						if (!answerCorrect) player.LoadCharacter();
+						print(answerCorrect);
 					});
 				});
 
 				currentGrade++;
 			}
+
+			this.StatusService.UpdateStatus("Game over");
 
 			playingPlayers.forEach((player) => player.LoadCharacter());
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);

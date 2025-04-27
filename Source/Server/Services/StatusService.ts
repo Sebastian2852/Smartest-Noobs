@@ -6,6 +6,7 @@ const UPDATE_STATUS_EVENT = Events.UpdateStatus;
 const GET_STATUS_FUNCTION = Functions.GetCurrentStatus;
 
 const START_TIMER_EVENT = Events.StartTimer;
+const STOP_TIMER_EVENT = Events.StopTimer;
 
 // Status system has been seperated into its own service
 // this service will also contain functions to update the timer
@@ -28,6 +29,10 @@ export default class StatusService implements OnStart {
 	public StartCountdown(time: number) {
 		START_TIMER_EVENT.broadcast(time);
 		Logger.Debug("Started countdown lasting: " + tostring(time));
+	}
+
+	public CancelCountdown() {
+		STOP_TIMER_EVENT.broadcast();
 	}
 
 	onStart(): void {
