@@ -55,6 +55,12 @@ export default class UserInterfaceController implements OnStart {
 			const answer = questionGUI.InputArea.InputBox.Text;
 			ANSWER_QUESTION_EVENT.fire(answer);
 		});
+
+		questionGUI.InputArea.InputBox.FocusLost.Connect((enterPressed) => {
+			if (!enterPressed) return;
+			const answer = questionGUI.InputArea.InputBox.Text;
+			ANSWER_QUESTION_EVENT.fire(answer);
+		});
 	}
 
 	constructor(private ClientDataController: ClientDataController) {}
