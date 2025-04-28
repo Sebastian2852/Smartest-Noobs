@@ -31,11 +31,13 @@ export default class UserInterfaceController implements OnStart {
 		Logger.Debug("Updated question text");
 	}
 
-	private HideQuestiongGUI() {
+	private SubmitAnswer() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		const questionGUI = playerGui.ScreenGui.QuestionBar;
+		const answer = questionGUI.InputArea.InputBox.Text;
+		ANSWER_QUESTION_EVENT.fire(answer);
 		questionGUI.Visible = false;
-		Logger.Debug("Hidden question GUI");
+		questionGUI.InputArea.InputBox.Text = "";
 	}
 
 	private OnDataChanged(data: typeof PlayerDataTemplate) {
@@ -46,20 +48,16 @@ export default class UserInterfaceController implements OnStart {
 	onStart() {
 		this.ClientDataController.DataChanged.Connect((data) => this.OnDataChanged(data));
 
-		QUESTION_EVENT.connect((questionText, QuestionTime) => this.UpdateQuestion(questionText));
+		QUESTION_EVENT.connect((questionText) => this.UpdateQuestion(questionText));
 
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		const questionGUI = playerGui.ScreenGui.QuestionBar;
 
-		questionGUI.InputArea.SubmitButton.MouseButton1Click.Connect(() => {
-			const answer = questionGUI.InputArea.InputBox.Text;
-			ANSWER_QUESTION_EVENT.fire(answer);
-		});
+		questionGUI.InputArea.SubmitButton.MouseButton1Click.Connect(() => this.SubmitAnswer());
 
 		questionGUI.InputArea.InputBox.FocusLost.Connect((enterPressed) => {
 			if (!enterPressed) return;
-			const answer = questionGUI.InputArea.InputBox.Text;
-			ANSWER_QUESTION_EVENT.fire(answer);
+			this.SubmitAnswer();
 		});
 	}
 
