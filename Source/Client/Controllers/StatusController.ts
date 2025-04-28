@@ -28,14 +28,17 @@ export default class StatusController implements OnStart {
 		Logger.Trace("Updating time text label");
 		const asString = tostring(time);
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground.Text;
+		const frame = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
+		const countdownLabel = frame.Text;
 
+		frame.Visible = true;
 		countdownLabel.Text = asString;
 		Logger.Debug("Updated countdown GUI");
 	}
 
 	private StartCountdown(length: number) {
 		Logger.Debug("Starting countdown loop that lasts: " + tostring(length) + "s");
+
 		for (let i = 0; i <= length; i++) {
 			this.UpdateCountdownGui(length - i);
 			task.wait(1);
@@ -47,6 +50,9 @@ export default class StatusController implements OnStart {
 	}
 
 	private StopCountdown() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
+		countdownLabel.Visible = false;
 		this.StopTimer = true;
 	}
 

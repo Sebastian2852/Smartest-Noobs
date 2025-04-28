@@ -237,10 +237,10 @@ export default class GameLoopService implements OnStart {
 
 			this.StatusService.UpdateStatus("Game over");
 
+			task.wait(5);
+
 			playingPlayers.forEach((player) => player.LoadCharacter());
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);
-
-			task.wait(4);
 
 			gameTrove.destroy();
 		}
