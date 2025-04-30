@@ -8,6 +8,7 @@ import { Events } from "Client/Network";
 const PLAYER = Players.LocalPlayer;
 
 const QUESTION_EVENT = Events.Question;
+const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
 
 @Controller()
@@ -48,10 +49,11 @@ export default class UserInterfaceController implements OnStart {
 	onStart() {
 		this.ClientDataController.DataChanged.Connect((data) => this.OnDataChanged(data));
 
-		QUESTION_EVENT.connect((questionText) => this.UpdateQuestion(questionText));
-
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		const questionGUI = playerGui.ScreenGui.QuestionBar;
+
+		QUESTION_EVENT.connect((questionText) => this.UpdateQuestion(questionText));
+		HIDE_QUESTION_EVENT.connect(() => (questionGUI.Visible = false));
 
 		questionGUI.InputArea.SubmitButton.MouseButton1Click.Connect(() => this.SubmitAnswer());
 

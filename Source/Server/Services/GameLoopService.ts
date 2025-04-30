@@ -17,6 +17,7 @@ const INTERMISSION_LENGTH = SERVER_CONFIG.GameLoop.IntermissionTime;
 
 const START_CUTSCENE_EVENT = Events.StartCutscene;
 const QUESTION_EVENT = Events.Question;
+const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
 
 @Service()
@@ -225,6 +226,7 @@ export default class GameLoopService implements OnStart {
 						}
 
 						this.StatusService.CancelCountdown();
+						HIDE_QUESTION_EVENT.fire(player);
 						answerConnection.Disconnect();
 
 						if (!answerCorrect) {
@@ -232,7 +234,11 @@ export default class GameLoopService implements OnStart {
 							playingPlayers.remove(index);
 						}
 						print(answerCorrect);
+
+						task.wait(2);
 					});
+
+					task.wait(2);
 				});
 
 				currentGrade++;

@@ -13,7 +13,7 @@ interface ServerToClientEvents {
 	StartCutscene(cutscene: Cutscenes): void;
 
 	Question(questionText: string, questionTime: number): void;
-	AnswerQuestion(answer: string): void;
+	HideQuestion(): void;
 
 	Data: {
 		UpdateData(data: typeof PlayerDataTemplate): void;
@@ -22,6 +22,7 @@ interface ServerToClientEvents {
 
 interface ClientToServerFunctions {
 	GetCurrentStatus(): string;
+	AnswerQuestion(answer: string): void;
 }
 
 interface ServerToClientFunctions {}
