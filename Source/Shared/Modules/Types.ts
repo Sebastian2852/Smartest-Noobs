@@ -11,6 +11,7 @@ type QuestionData = {
 					AnswerType: string;
 					ExactString: boolean;
 				};
+				Reward: number;
 			}
 		>
 	>;
@@ -27,6 +28,7 @@ export interface ServerConfig {
 
 export const PlayerDataTemplate = {
 	Wins: 0,
+	Coins: 0,
 
 	EquippedStand: "Default",
 	Stands: new Map<string, boolean>(),

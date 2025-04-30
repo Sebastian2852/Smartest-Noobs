@@ -31,6 +31,11 @@ interface HasGameGui {
 					Text: TextLabel;
 				};
 			};
+			Coins: ImageLabel & {
+				Coins: ImageLabel & {
+					Text: TextLabel;
+				};
+			};
 		};
 		Buttons: Frame & {
 			Stands: ImageButton & {

@@ -21,6 +21,16 @@ export default class DataService implements OnStart {
 		return profile.Data.EquippedStand;
 	}
 
+	public GiveCoins(player: Player, amount: number) {
+		const profile = this.ProfileMap.get(player.UserId);
+		if (profile === undefined) {
+			return;
+		}
+
+		profile.Data.Coins += amount;
+		UPDATE_DATA_EVENT.fire(player, profile.Data);
+	}
+
 	private SetEquippedStand(player: Player, stand: string) {
 		const profile = this.ProfileMap.get(player.UserId);
 		if (profile === undefined) {

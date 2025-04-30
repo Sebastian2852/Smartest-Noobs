@@ -20,6 +20,13 @@ export default class UserInterfaceController implements OnStart {
 		winsLabel.Text = winsString;
 	}
 
+	private UpdateCoinsStat(coins: number) {
+		const coinsString = tostring(coins);
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		const coinsLabel = playerGui.ScreenGui.Stats.Coins.Coins.Text;
+		coinsLabel.Text = coinsString;
+	}
+
 	private UpdateQuestion(questionText: string) {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		const questionGUI = playerGui.ScreenGui.QuestionBar;
@@ -40,6 +47,7 @@ export default class UserInterfaceController implements OnStart {
 
 	private OnDataChanged(data: typeof PlayerDataTemplate) {
 		this.UpdateWinsStat(data.Wins);
+		this.UpdateCoinsStat(data.Coins);
 	}
 
 	onStart() {

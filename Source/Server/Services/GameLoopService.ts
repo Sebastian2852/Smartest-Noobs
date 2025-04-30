@@ -222,7 +222,9 @@ export default class GameLoopService implements OnStart {
 						HIDE_QUESTION_EVENT.fire(player);
 						answerConnection.Disconnect();
 
-						if (!answerCorrect) {
+						if (answerCorrect) {
+							this.DataService.GiveCoins(player, question.Reward);
+						} else {
 							player.LoadCharacter();
 							playingPlayers.remove(index);
 						}
