@@ -1,7 +1,6 @@
 import { Controller, OnStart } from "@flamework/core";
 import { TweenService, Workspace } from "@rbxts/services";
 import { Events } from "Client/Network";
-import { Logger } from "Shared/Modules/Logger";
 import { Cutscenes } from "Shared/Modules/Types";
 
 const START_CUTSCENE_EVENT = Events.StartCutscene;
@@ -66,7 +65,7 @@ export default class CutsceneController implements OnStart {
 					this.EndCutscene();
 					break;
 				default:
-					Logger.Warn("Invalid cutscene passed");
+					warn("Invalid cutscene passed");
 					break;
 			}
 		});

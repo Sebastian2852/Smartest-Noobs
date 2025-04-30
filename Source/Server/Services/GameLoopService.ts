@@ -2,7 +2,6 @@ import { OnStart, Service } from "@flamework/core";
 import { Players, ReplicatedStorage, StarterGui, Workspace } from "@rbxts/services";
 import { GetConfig } from "Shared/Modules/Utils";
 import StatusService from "./StatusService";
-import { Logger } from "Shared/Modules/Logger";
 import DataService from "./DataService";
 import { Trove } from "@rbxts/trove";
 import { Events } from "Server/Network";
@@ -56,7 +55,6 @@ export default class GameLoopService implements OnStart {
 		const podium = Workspace.Podiums.FindFirstChild(tostring(podiumIndex)) as Model;
 
 		if (podium === undefined) {
-			Logger.Warn("Couldn't find podium for player, server player limit too high?");
 			player.Kick("Too many players in server?");
 			return $tuple(undefined as unknown as Model, undefined as unknown as () => void);
 		}
@@ -88,13 +86,10 @@ export default class GameLoopService implements OnStart {
 	}
 
 	onStart() {
-		Logger.Trace("Starting game loop");
 		game.BindToClose(() => {
-			Logger.Debug("Server closing, disabling game loop");
 			this.ServerClosing = true;
 		});
 
-		Logger.Debug("Starting game loop");
 		while (!this.ServerClosing) {
 			const playersInGame = this.GetPlayerCount();
 
@@ -105,12 +100,12 @@ export default class GameLoopService implements OnStart {
 				continue;
 			}
 
-			Logger.Trace("Starting intermission");
 			this.StatusService.UpdateStatus("Intermission");
 			this.StatusService.StartCountdown(INTERMISSION_LENGTH);
 			const playingPlayers = this.GetPlayersReady();
 			const gameTrove = new Trove();
 			task.wait(INTERMISSION_LENGTH);
+			this.StatusService.CancelCountdown();
 
 			const rng = new Random(os.time());
 			rng.Shuffle(playingPlayers);
@@ -167,9 +162,7 @@ export default class GameLoopService implements OnStart {
 			const playersLeft = playingPlayers.size();
 			let currentGrade = 1;
 
-			// THIS SHOULD NOT BE 0
-			// IT IS 0 FOR SINGLE PLAYER TESTING
-			while (playersLeft > 0) {
+			while (playersLeft > 1) {
 				const currentGradeData = QUESTION_DATA.get(currentGrade);
 				if (currentGradeData === undefined) {
 					break;

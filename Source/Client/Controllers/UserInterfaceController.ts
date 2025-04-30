@@ -2,7 +2,6 @@ import { Controller, OnStart } from "@flamework/core";
 import ClientDataController from "./ClientDataController";
 import { Players } from "@rbxts/services";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
-import { Logger } from "Shared/Modules/Logger";
 import { Events } from "Client/Network";
 
 const PLAYER = Players.LocalPlayer;
@@ -19,7 +18,6 @@ export default class UserInterfaceController implements OnStart {
 		const winsLabel = playerGui.ScreenGui.Stats.Wins.Wins.Text;
 
 		winsLabel.Text = winsString;
-		Logger.Debug("Updated wins text label");
 	}
 
 	private UpdateQuestion(questionText: string) {
@@ -29,7 +27,6 @@ export default class UserInterfaceController implements OnStart {
 
 		questionGUI.Visible = true;
 		questionLabel.Text = questionText;
-		Logger.Debug("Updated question text");
 	}
 
 	private SubmitAnswer() {
@@ -42,7 +39,6 @@ export default class UserInterfaceController implements OnStart {
 	}
 
 	private OnDataChanged(data: typeof PlayerDataTemplate) {
-		Logger.Trace("Data changed");
 		this.UpdateWinsStat(data.Wins);
 	}
 
