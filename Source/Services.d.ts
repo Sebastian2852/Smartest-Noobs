@@ -240,6 +240,22 @@ interface HasGameGui {
 	};
 }
 
+interface GradeLevel extends Model {
+	["Meshes/SpawnThing_Cube.004"]: MeshPart;
+	["Meshes/SpawnThing_Cube.001"]: MeshPart;
+	board: MeshPart & {
+		SurfaceGui: SurfaceGui & {
+			GradeLevel: TextLabel & {
+				UIStroke: UIStroke;
+			};
+			GradeSubject: TextLabel & {
+				UIStroke: UIStroke;
+			};
+		};
+		Texture: Texture;
+	};
+}
+
 interface PlayerGui extends BasePlayerGui, HasGameGui {}
 
 interface ServerScriptService extends Instance {
@@ -268,6 +284,7 @@ interface Workspace extends Instance {
 	GameParts: Folder & {
 		Curtain: UnionOperation;
 		PlayerSpotLight: Part;
+		GradeLevel: GradeLevel;
 	};
 	LobbyLights: Folder;
 }

@@ -122,10 +122,6 @@ export default class GameLoopService implements OnStart {
 			});
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
-			task.wait(5);
-
-			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
-
 			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
 				if (!light.IsA("Light")) return;
 
@@ -134,6 +130,9 @@ export default class GameLoopService implements OnStart {
 					Brightness: 0,
 				}).Play();
 			});
+
+			task.wait(5);
+			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
 
 			playingPlayers.forEach((player, index) => {
 				if (!player.Character) {
@@ -185,18 +184,24 @@ export default class GameLoopService implements OnStart {
 				}
 
 				const subjects = currentGradeData.Subjects;
-				subjects.forEach((questions) => {
+				subjects.forEach((questions, subjectName) => {
+					Workspace.GameParts.GradeLevel.board.SurfaceGui.GradeSubject.Text = `Grade ${currentGrade} - ${subjectName}`;
+
 					playingPlayers.forEach((player, index) => {
 						if (player === undefined) {
 							playingPlayers.remove(index);
 							return;
 						}
+						task.wait(1);
+
+						UPDATE_ACTIVE_PLAYER_EVENT.broadcast(index + 1);
+
+						task.wait(2);
 
 						const randomIndex = rng.NextInteger(1, questions.size());
 						const question = questions.get(randomIndex);
 						assert(question, "no question?");
 						QUESTION_EVENT.fire(player, question.Question, currentGradeData.QuestionTime);
-						UPDATE_ACTIVE_PLAYER_EVENT.broadcast(index + 1);
 
 						let questionAnswered = false;
 						let answerCorrect = false;
@@ -245,9 +250,6 @@ export default class GameLoopService implements OnStart {
 							player.LoadCharacter();
 							playingPlayers.remove(index);
 						}
-						print(answerCorrect);
-
-						task.wait(2);
 					});
 
 					task.wait(2);
