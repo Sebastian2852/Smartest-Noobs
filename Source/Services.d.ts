@@ -269,4 +269,5 @@ interface Workspace extends Instance {
 		Curtain: UnionOperation;
 		PlayerSpotLight: Part;
 	};
+	LobbyLights: Folder;
 }

@@ -1,5 +1,5 @@
 import { Controller, OnStart } from "@flamework/core";
-import { TweenService, Workspace } from "@rbxts/services";
+import { Players, TweenService, Workspace } from "@rbxts/services";
 import { Events } from "Client/Network";
 import { Cutscenes } from "Shared/Modules/Types";
 
@@ -91,5 +91,8 @@ export default class CutsceneController implements OnStart {
 				Position: new Vector3(floorPos.X, spotlightPos.Y, spotlightPos.Z),
 			}).Play();
 		});
+
+		const camera = Workspace.CurrentCamera!;
+		Players.LocalPlayer.CharacterAdded.Connect(() => (camera.CameraType = Enum.CameraType.Custom));
 	}
 }

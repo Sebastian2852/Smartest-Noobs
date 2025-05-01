@@ -1,5 +1,5 @@
 import { OnStart, Service } from "@flamework/core";
-import { Players, ReplicatedStorage, StarterGui, Workspace } from "@rbxts/services";
+import { Players, ReplicatedStorage, StarterGui, TweenService, Workspace } from "@rbxts/services";
 import { GetConfig } from "Shared/Modules/Utils";
 import StatusService from "./StatusService";
 import DataService from "./DataService";
@@ -19,6 +19,10 @@ const QUESTION_EVENT = Events.Question;
 const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
+
+const CURTAIN = Workspace.GameParts.Curtain;
+const LOBBY_LIGHTS = Workspace.LobbyLights;
+const ORIGINAL_CURTAIN_CFRAME = CURTAIN.CFrame;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -119,6 +123,17 @@ export default class GameLoopService implements OnStart {
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
 			task.wait(5);
+
+			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
+
+			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
+				if (!light.IsA("Light")) return;
+
+				const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
+				TweenService.Create(light, tweenInfo, {
+					Brightness: 0,
+				}).Play();
+			});
 
 			playingPlayers.forEach((player, index) => {
 				if (!player.Character) {
@@ -245,6 +260,16 @@ export default class GameLoopService implements OnStart {
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.End);
 
 			task.wait(5);
+
+			CURTAIN.CFrame = ORIGINAL_CURTAIN_CFRAME;
+			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
+				if (!light.IsA("Light")) return;
+
+				const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
+				TweenService.Create(light, tweenInfo, {
+					Brightness: 1,
+				}).Play();
+			});
 
 			playingPlayers.forEach((player) => player.LoadCharacter());
 
