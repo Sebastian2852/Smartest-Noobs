@@ -18,6 +18,7 @@ const START_CUTSCENE_EVENT = Events.StartCutscene;
 const QUESTION_EVENT = Events.Question;
 const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
+const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
 
 @Service()
 export default class GameLoopService implements OnStart {
@@ -117,7 +118,7 @@ export default class GameLoopService implements OnStart {
 			});
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
-			task.wait(1);
+			task.wait(5);
 
 			playingPlayers.forEach((player, index) => {
 				if (!player.Character) {
@@ -180,6 +181,7 @@ export default class GameLoopService implements OnStart {
 						const question = questions.get(randomIndex);
 						assert(question, "no question?");
 						QUESTION_EVENT.fire(player, question.Question, currentGradeData.QuestionTime);
+						UPDATE_ACTIVE_PLAYER_EVENT.broadcast(index + 1);
 
 						let questionAnswered = false;
 						let answerCorrect = false;

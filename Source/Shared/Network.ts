@@ -11,6 +11,7 @@ interface ServerToClientEvents {
 	StopTimer(): void;
 
 	StartCutscene(cutscene: Cutscenes): void;
+	UpdateActivePlayer(index: number): void;
 
 	Question(questionText: string, questionTime: number): void;
 	HideQuestion(): void;
@@ -22,7 +23,6 @@ interface ServerToClientEvents {
 
 interface ClientToServerFunctions {
 	GetCurrentStatus(): string;
-	AnswerQuestion(answer: string): void;
 }
 
 interface ServerToClientFunctions {}
