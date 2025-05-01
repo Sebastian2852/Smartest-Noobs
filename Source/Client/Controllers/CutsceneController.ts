@@ -77,7 +77,7 @@ export default class CutsceneController implements OnStart {
 			const camera = Workspace.CurrentCamera!;
 			const floor = Workspace.TrapDoors.FindFirstChild(tostring(index)) as Part;
 
-			const CameraPosition = floor.CFrame.mul(new CFrame(0, 7, -6)).mul(CFrame.Angles(0, math.rad(180), 0));
+			const CameraPosition = floor.CFrame.mul(new CFrame(0, 7, -10)).mul(CFrame.Angles(0, math.rad(180), 0));
 
 			const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
 			TweenService.Create(camera, tweenInfo, {
