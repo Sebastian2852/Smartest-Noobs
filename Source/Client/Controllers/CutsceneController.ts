@@ -7,6 +7,8 @@ const START_CUTSCENE_EVENT = Events.StartCutscene;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
 
 const CURTAIN = Workspace.GameParts.Curtain;
+const PLAYER_SPOTLIGHT = Workspace.GameParts.PlayerSpotLight;
+
 const ORIGINAL_CURTAIN_CFRAME = CURTAIN.CFrame;
 
 @Controller()
@@ -77,11 +79,17 @@ export default class CutsceneController implements OnStart {
 
 			const CameraPosition = floor.CFrame.mul(new CFrame(0, 7, -6)).mul(CFrame.Angles(0, math.rad(180), 0));
 
-			const tweenInfo = new TweenInfo(5, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
-			const tween = TweenService.Create(camera, tweenInfo, {
+			const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
+			TweenService.Create(camera, tweenInfo, {
 				CFrame: CameraPosition,
-			});
-			tween.Play();
+			}).Play();
+
+			const spotlightPos = PLAYER_SPOTLIGHT.CFrame;
+			const floorPos = floor.CFrame.Position;
+
+			TweenService.Create(PLAYER_SPOTLIGHT, tweenInfo, {
+				Position: new Vector3(floorPos.X, spotlightPos.Y, spotlightPos.Z),
+			}).Play();
 		});
 	}
 }
