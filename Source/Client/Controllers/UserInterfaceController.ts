@@ -9,6 +9,7 @@ const PLAYER = Players.LocalPlayer;
 const QUESTION_EVENT = Events.Question;
 const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
+const SHOW_GAME_GUI_EVENT = Events.ShowGameGui;
 
 @Controller()
 export default class UserInterfaceController implements OnStart {
@@ -50,7 +51,11 @@ export default class UserInterfaceController implements OnStart {
 		this.UpdateCoinsStat(data.Coins);
 	}
 
-	public ShowGameGui() {}
+	public ShowGameGui() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.ScreenGui.Buttons.Visible = true;
+		playerGui.ScreenGui.Stats.Visible = true;
+	}
 
 	public HideGameGui() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
@@ -89,6 +94,7 @@ export default class UserInterfaceController implements OnStart {
 
 		QUESTION_EVENT.connect((questionText) => this.UpdateQuestion(questionText));
 		HIDE_QUESTION_EVENT.connect(() => (questionGUI.Visible = false));
+		SHOW_GAME_GUI_EVENT.connect(() => this.ShowGameGui());
 
 		questionGUI.InputArea.SubmitButton.MouseButton1Click.Connect(() => this.SubmitAnswer());
 

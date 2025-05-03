@@ -19,6 +19,7 @@ const QUESTION_EVENT = Events.Question;
 const HIDE_QUESTION_EVENT = Events.HideQuestion;
 const ANSWER_QUESTION_EVENT = Events.AnswerQuestion;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
+const SHOW_GAME_GUI_EVENT = Events.ShowGameGui;
 
 const CURTAIN = Workspace.GameParts.Curtain;
 const LOBBY_LIGHTS = Workspace.LobbyLights;
@@ -159,7 +160,6 @@ export default class GameLoopService implements OnStart {
 
 				gameTrove.add(
 					Humanoid.Died.Connect(() => {
-						print("Removed");
 						playingPlayers.remove(index);
 						this.RemoveStand(player);
 					}),
@@ -167,7 +167,6 @@ export default class GameLoopService implements OnStart {
 
 				gameTrove.add(
 					character.Destroying.Connect(() => {
-						print("Removed");
 						playingPlayers.remove(index);
 						this.RemoveStand(player);
 					}),
@@ -230,6 +229,7 @@ export default class GameLoopService implements OnStart {
 								answerCorrect = true;
 							} else {
 								player.LoadCharacter();
+								SHOW_GAME_GUI_EVENT.fire(player);
 							}
 						});
 

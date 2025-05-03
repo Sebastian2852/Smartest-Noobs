@@ -13,6 +13,8 @@ interface ServerToClientEvents {
 	StartCutscene(cutscene: Cutscenes): void;
 	UpdateActivePlayer(index: number): void;
 
+	ShowGameGui(): void;
+
 	Question(questionText: string, questionTime: number): void;
 	HideQuestion(): void;
 
