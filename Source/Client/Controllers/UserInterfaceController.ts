@@ -1,6 +1,6 @@
 import { Controller, OnStart } from "@flamework/core";
 import ClientDataController from "./ClientDataController";
-import { Players } from "@rbxts/services";
+import { Players, TweenService } from "@rbxts/services";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
 import { Events } from "Client/Network";
 
@@ -48,6 +48,26 @@ export default class UserInterfaceController implements OnStart {
 	private OnDataChanged(data: typeof PlayerDataTemplate) {
 		this.UpdateWinsStat(data.Wins);
 		this.UpdateCoinsStat(data.Coins);
+	}
+
+	public StartTransition() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		const transitionFrame = playerGui.FullScreen.Transition;
+
+		const tweenInfo = new TweenInfo(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, false, 0);
+		TweenService.Create(transitionFrame, tweenInfo, {
+			BackgroundTransparency: 0,
+		}).Play();
+	}
+
+	public EndTransition() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		const transitionFrame = playerGui.FullScreen.Transition;
+
+		const tweenInfo = new TweenInfo(0.5, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 0, false, 0);
+		TweenService.Create(transitionFrame, tweenInfo, {
+			BackgroundTransparency: 1,
+		}).Play();
 	}
 
 	onStart() {

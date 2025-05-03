@@ -123,6 +123,8 @@ export default class GameLoopService implements OnStart {
 			});
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
+
+			task.wait(5);
 			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
 				if (!light.IsA("Light")) return;
 
@@ -131,8 +133,6 @@ export default class GameLoopService implements OnStart {
 					Brightness: 0,
 				}).Play();
 			});
-
-			task.wait(5);
 			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
 
 			playingPlayers.forEach((player, index) => {
@@ -178,7 +178,7 @@ export default class GameLoopService implements OnStart {
 			const playersLeft = playingPlayers.size();
 			let currentGrade = 1;
 
-			while (playersLeft > 1) {
+			while (playersLeft > 0) {
 				const currentGradeData = QUESTION_DATA.get(currentGrade);
 				if (currentGradeData === undefined) {
 					break;

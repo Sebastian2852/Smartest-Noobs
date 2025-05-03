@@ -238,6 +238,10 @@ interface HasGameGui {
 			};
 		};
 	};
+
+	FullScreen: ScreenGui & {
+		Transition: Frame;
+	};
 }
 
 interface GradeLevel extends Model {

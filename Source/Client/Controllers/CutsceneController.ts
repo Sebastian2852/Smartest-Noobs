@@ -2,6 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { Players, TweenService, Workspace } from "@rbxts/services";
 import { Events } from "Client/Network";
 import { Cutscenes } from "Shared/Modules/Types";
+import UserInterfaceController from "./UserInterfaceController";
 
 const START_CUTSCENE_EVENT = Events.StartCutscene;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
@@ -17,12 +18,18 @@ export default class CutsceneController implements OnStart {
 		const camera = Workspace.CurrentCamera!;
 		const cameraPositions = Workspace.StartCutsceneCameraPositions.GetChildren() as Part[];
 
+		this.UserInterfaceController.StartTransition();
+
 		camera.CameraType = Enum.CameraType.Scriptable;
 		cameraPositions.sort((a, b) => {
 			const aNumber = tonumber(a.Name)!;
 			const bNumber = tonumber(b.Name)!;
 			return aNumber < bNumber;
 		});
+
+		task.wait(1);
+
+		this.UserInterfaceController.EndTransition();
 
 		task.spawn(() => {
 			task.wait(1);
@@ -49,11 +56,17 @@ export default class CutsceneController implements OnStart {
 	}
 
 	private EndCutscene() {
+		this.UserInterfaceController.StartTransition();
+
 		const camera = Workspace.CurrentCamera!;
 		const tweenInfo = new TweenInfo(4, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
 		const tween = TweenService.Create(CURTAIN, tweenInfo, {
 			CFrame: ORIGINAL_CURTAIN_CFRAME,
 		});
+
+		task.wait(1);
+
+		this.UserInterfaceController.EndTransition();
 		tween.Play();
 		camera.CameraType = Enum.CameraType.Custom;
 	}
@@ -95,4 +108,6 @@ export default class CutsceneController implements OnStart {
 		const camera = Workspace.CurrentCamera!;
 		Players.LocalPlayer.CharacterAdded.Connect(() => (camera.CameraType = Enum.CameraType.Custom));
 	}
+
+	constructor(private UserInterfaceController: UserInterfaceController) {}
 }
