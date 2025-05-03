@@ -125,19 +125,7 @@ export default class GameLoopService implements OnStart {
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
 
-			task.wait(2);
-
-			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
-				if (!light.IsA("Light")) return;
-
-				const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
-				TweenService.Create(light, tweenInfo, {
-					Brightness: 0,
-				}).Play();
-			});
-
-			task.wait(3);
-			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
+			task.wait(0.5);
 
 			playingPlayers.forEach((player, index) => {
 				if (!player.Character) {
@@ -176,6 +164,21 @@ export default class GameLoopService implements OnStart {
 				Humanoid.JumpHeight = 0;
 				character.PivotTo(trapdoor.CFrame.add(new Vector3(0, 5, 0)));
 			});
+
+			task.wait(1.5);
+
+			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
+				if (!light.IsA("Light")) return;
+
+				const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
+				TweenService.Create(light, tweenInfo, {
+					Brightness: 0,
+				}).Play();
+			});
+
+			task.wait(3);
+
+			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
 
 			const playersLeft = playingPlayers.size();
 			let currentGrade = 1;
