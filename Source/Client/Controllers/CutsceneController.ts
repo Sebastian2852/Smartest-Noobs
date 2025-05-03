@@ -3,6 +3,7 @@ import { Players, TweenService, Workspace } from "@rbxts/services";
 import { Events } from "Client/Network";
 import { Cutscenes } from "Shared/Modules/Types";
 import UserInterfaceController from "./UserInterfaceController";
+import StatusController from "./StatusController";
 
 const START_CUTSCENE_EVENT = Events.StartCutscene;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
@@ -27,7 +28,10 @@ export default class CutsceneController implements OnStart {
 			return aNumber < bNumber;
 		});
 
-		task.wait(1);
+		task.wait(0.5);
+		this.UserInterfaceController.HideGameGui();
+		this.StatusController.HideStatusGui();
+		task.wait(0.5);
 
 		this.UserInterfaceController.EndTransition();
 
@@ -53,6 +57,8 @@ export default class CutsceneController implements OnStart {
 			tween.Play();
 			tween.Completed.Wait();
 		});
+
+		this.StatusController.ShowStatusGui();
 	}
 
 	private EndCutscene() {
@@ -109,5 +115,5 @@ export default class CutsceneController implements OnStart {
 		Players.LocalPlayer.CharacterAdded.Connect(() => (camera.CameraType = Enum.CameraType.Custom));
 	}
 
-	constructor(private UserInterfaceController: UserInterfaceController) {}
+	constructor(private UserInterfaceController: UserInterfaceController, private StatusController: StatusController) {}
 }

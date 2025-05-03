@@ -50,6 +50,16 @@ export default class UserInterfaceController implements OnStart {
 		this.UpdateCoinsStat(data.Coins);
 	}
 
+	public ShowGameGui() {}
+
+	public HideGameGui() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.ScreenGui.Buttons.Visible = false;
+		playerGui.ScreenGui.Stats.Visible = false;
+		playerGui.ScreenGui.Crates.Visible = false;
+		playerGui.ScreenGui.Stands.Visible = false;
+	}
+
 	public StartTransition() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		const transitionFrame = playerGui.FullScreen.Transition;

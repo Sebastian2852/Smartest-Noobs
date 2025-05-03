@@ -49,11 +49,25 @@ export default class StatusController implements OnStart {
 		this.StopTimer = true;
 	}
 
+	public HideStatusGui() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.ScreenGui.TopBar.Visible = false;
+	}
+
+	public ShowStatusGui() {
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.ScreenGui.TopBar.Visible = true;
+	}
+
 	onStart() {
 		UPDATE_STATUS_EVENT.connect((newStatus) => this.UpdateStatusGui(newStatus));
 		GET_STATUS_FUNCTION.invoke().andThen((status) => this.UpdateStatusGui(status));
 
 		START_TIMER_EVENT.connect((timerLength: number) => this.StartCountdown(timerLength));
 		STOP_TIMER_EVENT.connect(() => this.StopCountdown());
+
+		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
+		countdownLabel.Visible = false;
 	}
 }

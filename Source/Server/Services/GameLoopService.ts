@@ -101,7 +101,6 @@ export default class GameLoopService implements OnStart {
 			// Make sure there are enough players
 			if (playersInGame < PLAYERS_NEEDED_TO_START_GAME) {
 				this.StatusService.UpdateStatus("Not enough players");
-				this.StatusService.CancelCountdown();
 				task.wait(1);
 				continue;
 			}
@@ -112,6 +111,7 @@ export default class GameLoopService implements OnStart {
 			const gameTrove = new Trove();
 			task.wait(INTERMISSION_LENGTH);
 			this.StatusService.CancelCountdown();
+			this.StatusService.UpdateStatus("Preparing game");
 
 			const rng = new Random(os.time());
 			rng.Shuffle(playingPlayers);
@@ -124,7 +124,8 @@ export default class GameLoopService implements OnStart {
 
 			START_CUTSCENE_EVENT.broadcast(Cutscenes.Start);
 
-			task.wait(5);
+			task.wait(2);
+
 			LOBBY_LIGHTS.GetDescendants().forEach((light) => {
 				if (!light.IsA("Light")) return;
 
@@ -133,6 +134,8 @@ export default class GameLoopService implements OnStart {
 					Brightness: 0,
 				}).Play();
 			});
+
+			task.wait(3);
 			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
 
 			playingPlayers.forEach((player, index) => {
