@@ -180,10 +180,9 @@ export default class GameLoopService implements OnStart {
 
 			CURTAIN.CFrame = CURTAIN.CFrame.add(new Vector3(0, 25, 0));
 
-			const playersLeft = playingPlayers.size();
 			let currentGrade = 1;
 
-			while (playersLeft > 0) {
+			while (playingPlayers.size() > 0) {
 				const currentGradeData = QUESTION_DATA.get(currentGrade);
 				if (currentGradeData === undefined) {
 					break;
