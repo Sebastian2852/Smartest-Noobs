@@ -54,6 +54,7 @@ export default class UserInterfaceController implements OnStart {
 		this.ClientDataController.DataChanged.Connect((data) => this.OnDataChanged(data));
 
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.WaitForChild("ScreenGui"); // Ensure GUI exists before doing anything else
 		const questionGUI = playerGui.ScreenGui.QuestionBar;
 
 		QUESTION_EVENT.connect((questionText) => this.UpdateQuestion(questionText));

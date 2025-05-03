@@ -101,6 +101,7 @@ export default class GameLoopService implements OnStart {
 			// Make sure there are enough players
 			if (playersInGame < PLAYERS_NEEDED_TO_START_GAME) {
 				this.StatusService.UpdateStatus("Not enough players");
+				this.StatusService.CancelCountdown();
 				task.wait(1);
 				continue;
 			}
