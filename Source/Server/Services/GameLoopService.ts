@@ -280,6 +280,7 @@ export default class GameLoopService implements OnStart {
 			});
 
 			playingPlayers.forEach((player) => player.LoadCharacter());
+			SHOW_GAME_GUI_EVENT.broadcast();
 
 			gameTrove.destroy();
 		}
