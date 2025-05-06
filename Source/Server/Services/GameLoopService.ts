@@ -279,7 +279,11 @@ export default class GameLoopService implements OnStart {
 				}).Play();
 			});
 
-			playingPlayers.forEach((player) => player.LoadCharacter());
+			playingPlayers.forEach((player) => {
+				this.DataService.GiveWinToPlayer(player);
+				player.LoadCharacter();
+			});
+
 			SHOW_GAME_GUI_EVENT.broadcast();
 
 			gameTrove.destroy();
