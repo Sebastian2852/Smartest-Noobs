@@ -67,6 +67,7 @@ export default class StatusController implements OnStart {
 		STOP_TIMER_EVENT.connect(() => this.StopCountdown());
 
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		playerGui.WaitForChild("ScreenGui");
 		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
 		countdownLabel.Visible = false;
 	}

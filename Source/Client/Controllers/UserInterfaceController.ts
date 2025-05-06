@@ -102,6 +102,22 @@ export default class UserInterfaceController implements OnStart {
 			if (!enterPressed) return;
 			this.SubmitAnswer();
 		});
+
+		playerGui.ScreenGui.Buttons.Crates.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Crates.Visible = !playerGui.ScreenGui.Crates.Visible;
+		});
+
+		playerGui.ScreenGui.Buttons.Stands.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Stands.Visible = !playerGui.ScreenGui.Stands.Visible;
+		});
+
+		playerGui.ScreenGui.Crates.CloseButton.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Crates.Visible = false;
+		});
+
+		playerGui.ScreenGui.Stands.BackGround.CloseButton.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Stands.Visible = false;
+		});
 	}
 
 	constructor(private ClientDataController: ClientDataController) {}
