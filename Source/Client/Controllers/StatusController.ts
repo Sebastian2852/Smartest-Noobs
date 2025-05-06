@@ -14,20 +14,26 @@ const PLAYER = Players.LocalPlayer;
 export default class StatusController implements OnStart {
 	private StopTimer = false;
 
+	private FormatTime(seconds: number): string {
+		const minutes = math.floor(seconds / 60);
+		const secs = seconds % 60;
+		return `${string.format("%02d", minutes)} : ${string.format("%02d", secs)}`;
+	}
+
 	private UpdateStatusGui(newStatusText: string) {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		const statusTextLabel = playerGui.ScreenGui.TopBar.TopBar.Text;
+		const statusTextLabel = playerGui.ScreenGui.Timer.TimerMessage;
 
 		statusTextLabel.Text = newStatusText;
 	}
 
 	private UpdateCountdownGui(time: number) {
-		const asString = tostring(time);
+		const asString = this.FormatTime(time);
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		const frame = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
-		const countdownLabel = frame.Text;
+		const frame = playerGui.ScreenGui.Timer;
+		const countdownLabel = frame.CountDown;
 
-		frame.Visible = true;
+		countdownLabel.Visible = true;
 		countdownLabel.Text = asString;
 	}
 
@@ -44,19 +50,19 @@ export default class StatusController implements OnStart {
 
 	private StopCountdown() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
+		const countdownLabel = playerGui.ScreenGui.Timer.CountDown;
 		countdownLabel.Visible = false;
 		this.StopTimer = true;
 	}
 
 	public HideStatusGui() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		playerGui.ScreenGui.TopBar.Visible = false;
+		playerGui.ScreenGui.Timer.Visible = false;
 	}
 
 	public ShowStatusGui() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		playerGui.ScreenGui.TopBar.Visible = true;
+		playerGui.ScreenGui.Timer.Visible = true;
 	}
 
 	onStart() {
@@ -68,7 +74,7 @@ export default class StatusController implements OnStart {
 
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		playerGui.WaitForChild("ScreenGui");
-		const countdownLabel = playerGui.ScreenGui.TopBar.TopBar.WinsBackground;
+		const countdownLabel = playerGui.ScreenGui.Timer.CountDown;
 		countdownLabel.Visible = false;
 	}
 }

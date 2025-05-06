@@ -122,25 +122,9 @@ interface HasGameGui {
 			};
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
-		TopBar: Frame & {
-			TopBar: ImageLabel & {
-				UICorner: UICorner;
-				Text: TextLabel & {
-					UIStroke: UIStroke;
-				};
-				WinsBackground: ImageLabel & {
-					UICorner: UICorner;
-					Text: TextLabel & {
-						UIStroke: UIStroke;
-					};
-					HourGlass: ImageLabel & {
-						LocalScript: LocalScript;
-						UIAspectRatioConstraint: UIAspectRatioConstraint;
-					};
-					UIStroke: UIStroke;
-				};
-				UIStroke: UIStroke;
-			};
+		Timer: Frame & {
+			CountDown: TextLabel;
+			TimerMessage: TextLabel;
 		};
 		Crates: Frame & {
 			CloseButton: ImageButton & {
