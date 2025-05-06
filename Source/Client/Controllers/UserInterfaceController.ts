@@ -139,10 +139,19 @@ export default class UserInterfaceController implements OnStart {
 				assert(button, "No button was ever created for " + name);
 
 				const notOwnedOverlay = button.FindFirstChild("NotOwned")! as ImageLabel;
+				const equipButton = button.FindFirstChild("Equip")! as TextButton;
+				const equipButtonText = equipButton.FindFirstChild("text")! as TextLabel;
 				notOwnedOverlay.Visible = !owned;
 
 				if (owned) {
-					const equipButton = button.FindFirstChild("Equip")! as TextButton;
+					if (name === data.EquippedStand) {
+						equipButtonText.Text = "Equipped";
+						equipButton.Interactable = false;
+					} else {
+						equipButtonText.Text = "Equip";
+						equipButton.Interactable = true;
+					}
+
 					standsTrove.add(
 						equipButton.MouseButton1Click.Connect(() => {
 							EQUIP_STAND_FUNCTION.invoke(button.Name).andThen((didEquip) => {
@@ -152,6 +161,9 @@ export default class UserInterfaceController implements OnStart {
 							});
 						}),
 					);
+				} else {
+					equipButtonText.Text = "Locked";
+					equipButton.Interactable = false;
 				}
 			});
 		}
