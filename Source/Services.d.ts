@@ -84,23 +84,24 @@ interface HasGameGui {
 		Stands: Frame & {
 			Stands: Frame & {
 				Items: ScrollingFrame & {
-					UIListLayout: UIListLayout;
-					Stands: ImageLabel & {
-						SwordName: TextLabel & {
-							UIStroke: UIStroke;
-						};
-						NotOwned: ImageLabel & {
-							UICorner: UICorner;
-							ImageLabel: ImageLabel;
-						};
-						Equip: ImageButton & {
-							UICorner: UICorner;
-							text: TextLabel & {
+					UIListLayout: UIListLayout & {
+						Template: ImageLabel & {
+							SwordName: TextLabel & {
 								UIStroke: UIStroke;
 							};
-							UIStroke: UIStroke;
+							NotOwned: ImageLabel & {
+								UICorner: UICorner;
+								ImageLabel: ImageLabel;
+							};
+							Equip: ImageButton & {
+								UICorner: UICorner;
+								text: TextLabel & {
+									UIStroke: UIStroke;
+								};
+								UIStroke: UIStroke;
+							};
+							ItemImage: ImageLabel;
 						};
-						ItemImage: ImageLabel;
 					};
 				};
 			};
@@ -256,6 +257,7 @@ interface ServerScriptService extends Instance {
 			Commands: Folder;
 			RunEvents: Folder & {
 				SetStand: BindableEvent;
+				ResetData: BindableEvent;
 			};
 		};
 	};

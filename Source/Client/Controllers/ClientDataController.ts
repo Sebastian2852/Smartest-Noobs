@@ -10,6 +10,10 @@ export default class ClientDataController implements OnStart {
 	private Data = PlayerDataTemplate;
 	public DataChanged = new Signal<typeof PlayerDataTemplate>();
 
+	public GetData() {
+		return this.Data;
+	}
+
 	private OnUpdateDataEvent(newData: typeof PlayerDataTemplate) {
 		this.Data = newData;
 		this.DataChanged.Fire(this.Data);

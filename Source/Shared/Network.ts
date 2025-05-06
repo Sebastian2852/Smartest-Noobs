@@ -25,6 +25,10 @@ interface ServerToClientEvents {
 
 interface ClientToServerFunctions {
 	GetCurrentStatus(): string;
+
+	Data: {
+		EquipStand(stand: string): boolean;
+	};
 }
 
 interface ServerToClientFunctions {}

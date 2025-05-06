@@ -1,12 +1,13 @@
 import { OnStart, Service } from "@flamework/core";
 import ProfileStore from "@rbxts/profile-store";
-import { Players, ServerScriptService } from "@rbxts/services";
-import { Events } from "Server/Network";
+import { Players, ReplicatedStorage, ServerScriptService } from "@rbxts/services";
+import { Events, Functions } from "Server/Network";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
 
 const PLAYER_PROFILE_STORE = ProfileStore.New("PlayerData", PlayerDataTemplate);
 
 const UPDATE_DATA_EVENT = Events.Data.UpdateData;
+const EQUIP_STAND_FUNCTION = Functions.Data.EquipStand;
 
 @Service()
 export default class DataService implements OnStart {
@@ -45,11 +46,12 @@ export default class DataService implements OnStart {
 	private SetEquippedStand(player: Player, stand: string) {
 		const profile = this.ProfileMap.get(player.UserId);
 		if (profile === undefined) {
-			return undefined;
+			return false;
 		}
 
 		profile.Data.EquippedStand = stand;
 		UPDATE_DATA_EVENT.fire(player, profile.Data);
+		return true;
 	}
 
 	private UpdateLeaderstats(player: Player) {
@@ -95,6 +97,17 @@ export default class DataService implements OnStart {
 
 		profile.AddUserId(userId);
 		profile.Reconcile();
+
+		ReplicatedStorage.Stands.GetChildren().forEach((standConfig) => {
+			const foundData = profile.Data.Stands.get(standConfig.Name);
+			if (foundData === undefined) {
+				profile.Data.Stands.set(
+					standConfig.Name,
+					(standConfig.GetAttribute("OwnedByDefault") as boolean | undefined) ?? false,
+				);
+			}
+		});
+
 		this.ProfileMap.set(userId, profile);
 
 		profile.OnSessionEnd.Connect(() => {
@@ -124,5 +137,7 @@ export default class DataService implements OnStart {
 		ServerScriptService.Game.Cmdr.RunEvents.SetStand.Event.Connect((player: Player, stand: string) =>
 			this.SetEquippedStand(player, stand),
 		);
+
+		EQUIP_STAND_FUNCTION.setCallback((player, stand) => this.SetEquippedStand(player, stand));
 	}
 }
