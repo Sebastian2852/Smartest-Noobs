@@ -33,7 +33,6 @@ export default class StatusController implements OnStart {
 		const frame = playerGui.ScreenGui.Timer;
 		const countdownLabel = frame.CountDown;
 
-		countdownLabel.Visible = true;
 		countdownLabel.Text = asString;
 	}
 
@@ -45,24 +44,27 @@ export default class StatusController implements OnStart {
 			if (this.StopTimer) break;
 		}
 
+		if (this.StopTimer) {
+			const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+			const countdownLabel = playerGui.ScreenGui.Timer.CountDown;
+			countdownLabel.Text = "00 : 00";
+		}
+
 		this.StopTimer = false;
 	}
 
 	private StopCountdown() {
-		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		const countdownLabel = playerGui.ScreenGui.Timer.CountDown;
-		countdownLabel.Visible = false;
 		this.StopTimer = true;
 	}
 
 	public HideStatusGui() {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		playerGui.ScreenGui.Timer.Visible = false;
+		playerGui.ScreenGui.Timer.TimerMessage.Text = "";
 	}
 
 	public ShowStatusGui() {
-		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
-		playerGui.ScreenGui.Timer.Visible = true;
+		// const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
+		// playerGui.ScreenGui.Timer.Visible = true;
 	}
 
 	onStart() {
@@ -75,6 +77,6 @@ export default class StatusController implements OnStart {
 		const playerGui = PLAYER.WaitForChild("PlayerGui") as PlayerGui;
 		playerGui.WaitForChild("ScreenGui");
 		const countdownLabel = playerGui.ScreenGui.Timer.CountDown;
-		countdownLabel.Visible = false;
+		countdownLabel.Text = "00 : 00";
 	}
 }
