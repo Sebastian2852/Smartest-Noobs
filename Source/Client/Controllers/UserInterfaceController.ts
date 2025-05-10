@@ -1,6 +1,6 @@
 import { Controller, OnStart } from "@flamework/core";
 import ClientDataController from "./ClientDataController";
-import { Players, ReplicatedStorage, TweenService } from "@rbxts/services";
+import { MarketplaceService, Players, ReplicatedStorage, TweenService } from "@rbxts/services";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
 import { Events, Functions } from "Client/Network";
 import { Trove } from "@rbxts/trove";
@@ -116,12 +116,20 @@ export default class UserInterfaceController implements OnStart {
 			playerGui.ScreenGui.Stands.Visible = !playerGui.ScreenGui.Stands.Visible;
 		});
 
+		playerGui.ScreenGui.Buttons.Shop.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Shop.Visible = !playerGui.ScreenGui.Shop.Visible;
+		});
+
 		playerGui.ScreenGui.Crates.CloseButton.MouseButton1Click.Connect(() => {
 			playerGui.ScreenGui.Crates.Visible = false;
 		});
 
 		playerGui.ScreenGui.Stands.BackGround.CloseButton.MouseButton1Click.Connect(() => {
 			playerGui.ScreenGui.Stands.Visible = false;
+		});
+
+		playerGui.ScreenGui.Shop.CloseButton.MouseButton1Click.Connect(() => {
+			playerGui.ScreenGui.Shop.Visible = false;
 		});
 
 		// Create GUIs
@@ -179,6 +187,38 @@ export default class UserInterfaceController implements OnStart {
 		this.ClientDataController.DataChanged.Connect((data) => UpdateStandsButtons(data));
 		const data = this.ClientDataController.GetData();
 		UpdateStandsButtons(data);
+
+		// SHOP
+
+		const shopFrame = playerGui.ScreenGui.Shop;
+
+		shopFrame.Coins.GetChildren().forEach((button) => {
+			if (!button.IsA("GuiButton")) return;
+
+			const typedButton = button as ImageButton;
+			const productId = button.GetAttribute("productId") as number;
+
+			if (typeOf(tonumber(productId)) !== "number") {
+				warn(button.GetFullName(), "doesnt have a valid `productId` attribute");
+				return;
+			}
+
+			typedButton.MouseButton1Click.Connect(() => MarketplaceService.PromptProductPurchase(PLAYER, productId));
+		});
+
+		shopFrame.Gamepasses.GetChildren().forEach((button) => {
+			if (!button.IsA("GuiButton")) return;
+
+			const typedButton = button as ImageButton;
+			const productId = button.GetAttribute("gamepassId") as number;
+
+			if (typeOf(tonumber(productId)) !== "number") {
+				warn(button.GetFullName(), "doesnt have a valid `gamepassId` attribute");
+				return;
+			}
+
+			typedButton.MouseButton1Click.Connect(() => MarketplaceService.PromptGamePassPurchase(PLAYER, productId));
+		});
 	}
 
 	constructor(private ClientDataController: ClientDataController) {}

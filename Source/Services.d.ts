@@ -1,45 +1,69 @@
 interface HasGameGui {
 	ScreenGui: ScreenGui & {
-		QuestionBar: Frame & {
-			InputArea: ImageLabel & {
-				UIGradient: UIGradient;
-				SubmitButton: ImageButton & {
-					XButton: ImageLabel & {
-						Text: TextLabel & {
-							UITextSizeConstraint: UITextSizeConstraint;
-							UIStroke: UIStroke;
-						};
-					};
-					UIAspectRatioConstraint: UIAspectRatioConstraint;
-				};
-				UICorner: UICorner;
-				UIStroke: UIStroke;
-				InputBox: TextBox & {
-					UIStroke: UIStroke;
-				};
-				ItemImage: ImageLabel;
-			};
-			QuestionText: TextLabel & {
-				UITextSizeConstraint: UITextSizeConstraint;
-				UIStroke: UIStroke;
-			};
-		};
-
 		Stats: Frame & {
 			Wins: ImageLabel & {
+				UICorner: UICorner;
 				Wins: ImageLabel & {
-					Text: TextLabel;
+					Text: TextLabel & {
+						UIStroke: UIStroke;
+					};
 				};
 			};
 			Coins: ImageLabel & {
+				UICorner: UICorner;
 				Coins: ImageLabel & {
-					Text: TextLabel;
+					Text: TextLabel & {
+						UIStroke: UIStroke;
+					};
 				};
+			};
+		};
+		TimerRound: Frame & {
+			Centre: ImageLabel;
+			IconRed: ImageLabel;
+			UICorner: UICorner;
+			UIGradient: UIGradient;
+			TextLabel: TextLabel & {
+				UIStroke: UIStroke;
+			};
+			Icon: ImageLabel;
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+		};
+		Shop: ImageLabel & {
+			CloseButton: ImageButton;
+			Title: TextLabel & {
+				TextLabel: TextLabel & {
+					UIStroke: UIStroke;
+				};
+			};
+			GamepassesTitle: ImageLabel;
+			CoinsTitle: ImageLabel;
+			Gamepasses: ScrollingFrame & {
+				ExtraHealth: ImageButton & {
+					Price: TextLabel;
+					ImageLabel: ImageLabel;
+					Description: TextLabel & {
+						UITextSizeConstraint: UITextSizeConstraint;
+					};
+					Robux: ImageLabel;
+				};
+				UIGridLayout: UIGridLayout;
+				["X2 Coins"]: ImageButton & {
+					Price: TextLabel;
+					ImageLabel: ImageLabel;
+					Description: TextLabel & {
+						UITextSizeConstraint: UITextSizeConstraint;
+					};
+					Robux: ImageLabel;
+				};
+			};
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+			Coins: ScrollingFrame & {
+				UIGridLayout: UIGridLayout;
 			};
 		};
 		Buttons: Frame & {
 			Stands: ImageButton & {
-				UIGradient: UIGradient;
 				Notfication: ImageLabel & {
 					UIAspectRatioConstraint: UIAspectRatioConstraint;
 					Text: TextLabel & {
@@ -55,7 +79,7 @@ interface HasGameGui {
 					UIStroke: UIStroke;
 				};
 				UIAspectRatioConstraint: UIAspectRatioConstraint;
-				UIStroke: UIStroke;
+				UIGradient: UIGradient;
 			};
 			Shop: ImageButton & {
 				Shop: ImageLabel & {
@@ -67,7 +91,6 @@ interface HasGameGui {
 					UIStroke: UIStroke;
 				};
 				UIAspectRatioConstraint: UIAspectRatioConstraint;
-				UIStroke: UIStroke;
 			};
 			Crates: ImageButton & {
 				UIGradient: UIGradient;
@@ -77,7 +100,6 @@ interface HasGameGui {
 					UIStroke: UIStroke;
 				};
 				UIAspectRatioConstraint: UIAspectRatioConstraint;
-				UIStroke: UIStroke;
 			};
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
@@ -123,9 +145,17 @@ interface HasGameGui {
 			};
 			UIAspectRatioConstraint: UIAspectRatioConstraint;
 		};
-		Timer: Frame & {
-			CountDown: TextLabel;
-			TimerMessage: TextLabel;
+		QuestionBar: Frame & {
+			QuestionText: TextLabel & {
+				UIStroke: UIStroke;
+			};
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+			InputArea: ImageLabel & {
+				SubmitButton: ImageButton;
+				InputBox: TextBox & {
+					UITextSizeConstraint: UITextSizeConstraint;
+				};
+			};
 		};
 		Crates: Frame & {
 			CloseButton: ImageButton & {
@@ -221,6 +251,11 @@ interface HasGameGui {
 				UIGradient: UIGradient;
 				ItemImage: ImageLabel;
 			};
+		};
+		Timer: ImageLabel & {
+			TimerMessage: TextLabel;
+			UIAspectRatioConstraint: UIAspectRatioConstraint;
+			CountDown: TextLabel;
 		};
 	};
 
