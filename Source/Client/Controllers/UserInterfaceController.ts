@@ -198,10 +198,21 @@ export default class UserInterfaceController implements OnStart {
 			const typedButton = button as ImageButton;
 			const productId = button.GetAttribute("productId") as number;
 
-			if (typeOf(tonumber(productId)) !== "number") {
+			if (typeOf(tonumber(productId)) !== "number" || tonumber(productId) === 0) {
 				warn(button.GetFullName(), "doesnt have a valid `productId` attribute");
 				return;
 			}
+
+			const productInfo = MarketplaceService.GetProductInfo(productId, Enum.InfoType.Product);
+
+			const priceLabel = button.FindFirstChild("Price")! as TextLabel;
+			priceLabel.Text = tostring(productInfo.PriceInRobux);
+
+			const nameLabel = button.FindFirstChild("Name")! as TextLabel;
+			nameLabel.Text = productInfo.Name;
+
+			const image = button.FindFirstChild("ImageLabel")! as ImageLabel;
+			image.Image = "rbxassetid://" + productInfo.IconImageAssetId;
 
 			typedButton.MouseButton1Click.Connect(() => MarketplaceService.PromptProductPurchase(PLAYER, productId));
 		});

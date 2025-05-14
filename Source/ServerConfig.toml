@@ -1,3 +1,8 @@
 [GameLoop]
 PlayersNeededToStart = 2
 IntermissionTime = 10
+
+[CoinProducts]
+
+[CoinProducts.3285838261]
+coinAmount = 300

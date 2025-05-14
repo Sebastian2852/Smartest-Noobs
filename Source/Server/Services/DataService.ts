@@ -1,9 +1,11 @@
 import { OnStart, Service } from "@flamework/core";
 import ProfileStore from "@rbxts/profile-store";
-import { Players, ReplicatedStorage, ServerScriptService } from "@rbxts/services";
+import { GuiService, MarketplaceService, Players, ReplicatedStorage, ServerScriptService } from "@rbxts/services";
 import { Events, Functions } from "Server/Network";
 import { PlayerDataTemplate } from "Shared/Modules/Types";
+import { GetConfig } from "Shared/Modules/Utils";
 
+const SERVER_CONFIG = GetConfig();
 const PLAYER_PROFILE_STORE = ProfileStore.New("PlayerData", PlayerDataTemplate);
 
 const UPDATE_DATA_EVENT = Events.Data.UpdateData;
@@ -36,11 +38,12 @@ export default class DataService implements OnStart {
 	public GiveCoins(player: Player, amount: number) {
 		const profile = this.ProfileMap.get(player.UserId);
 		if (profile === undefined) {
-			return;
+			return false;
 		}
 
 		profile.Data.Coins += amount;
 		UPDATE_DATA_EVENT.fire(player, profile.Data);
+		return true;
 	}
 
 	private SetEquippedStand(player: Player, stand: string) {
@@ -130,6 +133,23 @@ export default class DataService implements OnStart {
 		profile?.EndSession();
 	}
 
+	private onProcessReceipt(receiptInfo: ReceiptInfo) {
+		const productId = receiptInfo.ProductId;
+		const buyerUserId = receiptInfo.PlayerId;
+
+		const buyer = Players.GetPlayerByUserId(buyerUserId);
+		const coinProductInfo = SERVER_CONFIG.CoinProducts.get(tostring(productId));
+
+		if (coinProductInfo === undefined) return Enum.ProductPurchaseDecision.NotProcessedYet;
+		if (buyer === undefined || !buyer.IsDescendantOf(Players)) return Enum.ProductPurchaseDecision.NotProcessedYet;
+
+		const given = this.GiveCoins(buyer, coinProductInfo.coinAmount);
+
+		if (!given) return Enum.ProductPurchaseDecision.NotProcessedYet;
+
+		return Enum.ProductPurchaseDecision.PurchaseGranted;
+	}
+
 	onStart() {
 		Players.PlayerAdded.Connect((player) => this.OnPlayerAdded(player));
 		Players.PlayerRemoving.Connect((player) => this.OnPlayerRemoved(player));
@@ -138,6 +158,7 @@ export default class DataService implements OnStart {
 			this.SetEquippedStand(player, stand),
 		);
 
+		MarketplaceService.ProcessReceipt = (receiptInfo) => this.onProcessReceipt(receiptInfo);
 		EQUIP_STAND_FUNCTION.setCallback((player, stand) => this.SetEquippedStand(player, stand));
 	}
 }

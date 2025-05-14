@@ -24,6 +24,7 @@ export interface ServerConfig {
 		PlayersNeededToStart: number;
 		IntermissionTime: number;
 	};
+	CoinProducts: Map<string, { coinAmount: number }>;
 }
 
 export const PlayerDataTemplate = {
