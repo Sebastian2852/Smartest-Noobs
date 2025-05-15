@@ -38,4 +38,5 @@ export const PlayerDataTemplate = {
 export const enum Cutscenes {
 	Start,
 	End,
+	Death,
 }

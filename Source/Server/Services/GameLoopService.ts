@@ -25,6 +25,10 @@ const CURTAIN = Workspace.GameParts.Curtain;
 const LOBBY_LIGHTS = Workspace.LobbyLights;
 const ORIGINAL_CURTAIN_CFRAME = CURTAIN.CFrame;
 
+const PLAYER_STANDS = new Instance("Folder");
+PLAYER_STANDS.Parent = Workspace;
+PLAYER_STANDS.Name = "_PlayerStands";
+
 @Service()
 export default class GameLoopService implements OnStart {
 	private ServerClosing = false;
@@ -61,7 +65,7 @@ export default class GameLoopService implements OnStart {
 		const podium = Workspace.Podiums.FindFirstChild(tostring(podiumIndex)) as Model;
 
 		if (podium === undefined) {
-			player.Kick("Too many players in server?");
+			player.Kick("Failed to find stand; please report this to the developers");
 			return $tuple(undefined as unknown as Model, undefined as unknown as () => void);
 		}
 
@@ -71,7 +75,7 @@ export default class GameLoopService implements OnStart {
 		podium.PivotTo(newPivot);
 
 		const playerStand = standModel.Clone();
-		playerStand.Parent = Workspace;
+		playerStand.Parent = PLAYER_STANDS;
 		playerStand.PivotTo(pivot);
 
 		this.StandMap.set(player.UserId, index + 1);
@@ -82,7 +86,7 @@ export default class GameLoopService implements OnStart {
 		const standId = this.StandMap.get(player.UserId);
 		if (standId === undefined) return false;
 
-		const stand = Workspace.Podiums.FindFirstChild(tostring(standId));
+		const stand = PLAYER_STANDS.FindFirstChild(tostring(standId));
 		if (stand === undefined) return false;
 		stand.Destroy();
 
@@ -190,7 +194,7 @@ export default class GameLoopService implements OnStart {
 
 				const subjects = currentGradeData.Subjects;
 				subjects.forEach((questions, subjectName) => {
-					Workspace.GameParts.GradeLevel.board.SurfaceGui.GradeSubject.Text = `Grade ${currentGrade} - ${subjectName}`;
+					Workspace.GameParts.GradeLevel.board.SurfaceGui.GradeSubject.Text = `Grade ${currentGrade} | ${subjectName}`;
 
 					playingPlayers.forEach((player, index) => {
 						if (player === undefined) {
@@ -199,6 +203,7 @@ export default class GameLoopService implements OnStart {
 						}
 						task.wait(1);
 
+						const floor = Workspace.TrapDoors.FindFirstChild(tostring(index + 1)) as Part;
 						UPDATE_ACTIVE_PLAYER_EVENT.broadcast(index + 1);
 
 						task.wait(2);
@@ -230,8 +235,15 @@ export default class GameLoopService implements OnStart {
 							) {
 								answerCorrect = true;
 							} else {
-								player.LoadCharacter();
+								START_CUTSCENE_EVENT.broadcast(Cutscenes.Death);
+								floor.CanCollide = false;
+
+								gameTrove.add(() => (floor.CanCollide = true));
+
+								task.wait(3);
+
 								SHOW_GAME_GUI_EVENT.fire(player);
+								player.LoadCharacter();
 							}
 						});
 
@@ -253,7 +265,6 @@ export default class GameLoopService implements OnStart {
 						if (answerCorrect) {
 							this.DataService.GiveCoins(player, question.Reward);
 						} else {
-							player.LoadCharacter();
 							playingPlayers.remove(index);
 						}
 					});

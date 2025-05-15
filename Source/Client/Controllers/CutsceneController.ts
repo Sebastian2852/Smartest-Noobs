@@ -5,6 +5,8 @@ import { Cutscenes } from "Shared/Modules/Types";
 import UserInterfaceController from "./UserInterfaceController";
 import StatusController from "./StatusController";
 
+const PLAYER = Players.LocalPlayer;
+
 const START_CUTSCENE_EVENT = Events.StartCutscene;
 const UPDATE_ACTIVE_PLAYER_EVENT = Events.UpdateActivePlayer;
 
@@ -15,6 +17,8 @@ const ORIGINAL_CURTAIN_CFRAME = CURTAIN.CFrame;
 
 @Controller()
 export default class CutsceneController implements OnStart {
+	private ActivePlayer = -1;
+
 	private StartCutscene() {
 		const camera = Workspace.CurrentCamera!;
 		const cameraPositions = Workspace.StartCutsceneCameraPositions.GetChildren() as Part[];
@@ -75,6 +79,23 @@ export default class CutsceneController implements OnStart {
 		this.UserInterfaceController.EndTransition();
 		tween.Play();
 		camera.CameraType = Enum.CameraType.Custom;
+
+		const character = PLAYER.Character ?? PLAYER.CharacterAdded.Wait()[0];
+		camera.CameraSubject = character.WaitForChild("Humanoid")! as Humanoid;
+	}
+
+	private DeathCutscene() {
+		// const activePlayer = this.ActivePlayer;
+		// const camera = Workspace.CurrentCamera!;
+		// const floor = Workspace.TrapDoors.FindFirstChild(tostring(activePlayer)) as Part;
+		// const targetPosition = floor.CFrame.mul(new CFrame(0, 7, 10)).mul(CFrame.Angles(0, 0, 0));
+
+		// const tweenInfo = new TweenInfo(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0);
+		// TweenService.Create(camera, tweenInfo, {
+		// 	CFrame: targetPosition,
+		// }).Play();
+
+		warn("no impl");
 	}
 
 	onStart() {
@@ -86,6 +107,9 @@ export default class CutsceneController implements OnStart {
 				case Cutscenes.End:
 					this.EndCutscene();
 					break;
+				case Cutscenes.Death:
+					this.DeathCutscene();
+					break;
 				default:
 					warn("Invalid cutscene passed");
 					break;
@@ -93,6 +117,7 @@ export default class CutsceneController implements OnStart {
 		});
 
 		UPDATE_ACTIVE_PLAYER_EVENT.connect((index) => {
+			this.ActivePlayer = index;
 			const camera = Workspace.CurrentCamera!;
 			const floor = Workspace.TrapDoors.FindFirstChild(tostring(index)) as Part;
 
@@ -110,9 +135,6 @@ export default class CutsceneController implements OnStart {
 				Position: new Vector3(floorPos.X, spotlightPos.Y, spotlightPos.Z),
 			}).Play();
 		});
-
-		const camera = Workspace.CurrentCamera!;
-		Players.LocalPlayer.CharacterAdded.Connect(() => (camera.CameraType = Enum.CameraType.Custom));
 	}
 
 	constructor(private UserInterfaceController: UserInterfaceController, private StatusController: StatusController) {}
