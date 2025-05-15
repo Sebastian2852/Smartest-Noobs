@@ -223,10 +223,24 @@ export default class UserInterfaceController implements OnStart {
 			const typedButton = button as ImageButton;
 			const productId = button.GetAttribute("gamepassId") as number;
 
-			if (typeOf(tonumber(productId)) !== "number") {
+			if (typeOf(tonumber(productId)) !== "number" || tonumber(productId) === 0) {
 				warn(button.GetFullName(), "doesnt have a valid `gamepassId` attribute");
 				return;
 			}
+
+			const productInfo = MarketplaceService.GetProductInfo(productId, Enum.InfoType.GamePass);
+
+			const priceLabel = button.FindFirstChild("Price")! as TextLabel;
+			priceLabel.Text = tostring(productInfo.PriceInRobux);
+
+			const nameLabel = button.FindFirstChild("Name")! as TextLabel;
+			nameLabel.Text = productInfo.Name;
+
+			const descriptionLabel = button.FindFirstChild("Description")! as TextLabel;
+			descriptionLabel.Text = productInfo.Description ?? "";
+
+			const image = button.FindFirstChild("ImageLabel")! as ImageLabel;
+			image.Image = "rbxassetid://" + productInfo.IconImageAssetId;
 
 			typedButton.MouseButton1Click.Connect(() => MarketplaceService.PromptGamePassPurchase(PLAYER, productId));
 		});
