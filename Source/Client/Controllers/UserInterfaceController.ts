@@ -231,7 +231,8 @@ export default class UserInterfaceController implements OnStart {
 			const productInfo = MarketplaceService.GetProductInfo(productId, Enum.InfoType.GamePass);
 
 			const priceLabel = button.FindFirstChild("Price")! as TextLabel;
-			priceLabel.Text = tostring(productInfo.PriceInRobux);
+			if (MarketplaceService.UserOwnsGamePassAsync(PLAYER.UserId, productId)) priceLabel.Text = "Owned";
+			else priceLabel.Text = tostring(productInfo.PriceInRobux);
 
 			const nameLabel = button.FindFirstChild("Name")! as TextLabel;
 			nameLabel.Text = productInfo.Name;
